@@ -62,9 +62,6 @@ class StreamService implements HttpResourceService
         return new Stream($row);
     }
 
-    /**
-     * @return Stream
-     */
     public function deleteStream($stream_id, array $values = array())
     {
         $db_service = Services::get('Database');
@@ -76,8 +73,6 @@ class StreamService implements HttpResourceService
         $db_service->deleteTableRows('activities', 'stream_id = ?', array($stream_id));
 
         $db_service->deleteTableRow('activity_streams', 'id = ?', array($stream_id));
-
-        return $stream;
     }
 
     /**

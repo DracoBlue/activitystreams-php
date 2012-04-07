@@ -94,11 +94,6 @@ class SubscriptionService implements HttpResourceService
                 'stream_id' => $stream->getId(),
             ));
         }
-
-        return array(
-            'object_id' => $object->getId(),
-            'stream_id' => $stream->getId(),
-        );
     }
 
     public function postSubscription(array $values = array())
@@ -132,11 +127,6 @@ class SubscriptionService implements HttpResourceService
                 'stream_id' => $stream->getId(),
             ));
         }
-
-        return array(
-            'object_id' => $object->getId(),
-            'stream_id' => $stream->getId(),
-        );
     }
 
 }

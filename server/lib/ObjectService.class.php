@@ -29,7 +29,7 @@ class ObjectService implements HttpResourceService
     }
 
     /**
-     * @return Actor[]
+     * @return ActivityStreamObject[]
      */
     public function getObjects(array $values)
     {
@@ -52,7 +52,7 @@ class ObjectService implements HttpResourceService
     }
 
     /**
-     * @return Actor
+     * @return ActivityStreamObject
      */
     public function getObject($object_id, array $values = array())
     {
@@ -61,9 +61,6 @@ class ObjectService implements HttpResourceService
         return new ActivityStreamObject($row);
     }
 
-    /**
-     * @return Actor
-     */
     public function deleteObject($object_id, array $values = array())
     {
         $db_service = Services::get('Database');
@@ -74,12 +71,10 @@ class ObjectService implements HttpResourceService
         $db_service->deleteTableRows('activity_stream_unsubscriptions', 'object_id = ?', array($object_id));
 
         $db_service->deleteTableRow('objects', 'id = ?', array($object_id));
-
-        return $object;
     }
 
     /**
-     * @return Actor
+     * @return ActivityStreamObject
      */
     public function postObject(array $values)
     {
