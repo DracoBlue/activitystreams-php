@@ -16,9 +16,9 @@ class AsObject extends AsResource
         return $this->data['id'];
     }
     
-    public function getTitle()
+    public function getValues()
     {
-        return $this->data['title'];
+        return $this->data;
     }
     
     public function getUrl()

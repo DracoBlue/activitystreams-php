@@ -22,11 +22,6 @@ class Services
         {
             require_once($file);
         }
-        $file = dirname(__FILE__) . '/' . $className . '.interface.php';
-        if (file_exists($file))
-        {
-            require_once($file);
-        }
     }
 }
 

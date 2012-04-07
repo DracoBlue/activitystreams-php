@@ -90,15 +90,15 @@ class HttpClientService
         ), array(), $auth);
     }
 
-    public function patch($url, array $values = array(), $auth = array())
-    {
-        return $this->rawRequest('PATCH', $url, array(), $values, $auth);
-    }
-
-    public function put($url, array $values = array(), $auth = array())
-    {
-        return $this->rawRequest('PUT', $url, array(), $values, $auth);
-    }
+    // public function patch($url, array $values = array(), $auth = array())
+    // {
+        // return $this->rawRequest('PATCH', $url, array(), $values, $auth);
+    // }
+// 
+    // public function put($url, array $values = array(), $auth = array())
+    // {
+        // return $this->rawRequest('PUT', $url, array(), $values, $auth);
+    // }
 
     public function delete($url, array $values = array(), $auth = array())
     {

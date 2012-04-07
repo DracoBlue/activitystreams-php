@@ -128,7 +128,7 @@ class AsClient extends AsResource
         foreach ($subscriptions as $subscription_data)
         {
             $subscription = new AsSubscription($this, $subscription_data);
-            if ($subscription->getStreamId() == $stream->getId())
+            if ($subscription->getStreamId() == $stream->getId() && $subscription->getObjectId() == $object->getId())
             {
                 $this->json_client->delete($subscription->getLink('unsubscribe'));
             }

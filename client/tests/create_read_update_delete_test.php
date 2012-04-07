@@ -20,7 +20,8 @@ $activity_data = $client->createActivity($public_stream, array('verb' => 'post',
 sleep(1.1);
 
 $second_blog = $client->createObject(array('url' => 'http://webdevberlin.com'));
-$activity_data = $client->createActivity($private_stream, array('verb' => 'post', 'title' => 'I posted a (private) new link', 'bar_attribute' => 1337), $actor1, $second_blog);
+$second_blog_post = $client->createObject(array('url' => 'http://webdevberlin.com/post/1'));
+$activity_data = $client->createActivity($private_stream, array('verb' => 'post', 'title' => 'I posted a (private) new link', 'bar_attribute' => 1337), $actor1, $second_blog, $second_blog_post);
 
 /*
  * Get the feed (should only include the public stream post)
@@ -58,6 +59,30 @@ $activities = $client->getFeedForObject($actor1);
 print_r($activities);
 assert(count($activities['items']) === 1);
 
-// $client->deleteStream($public_stream);
-// $client->deleteStream($private_stream);
-// $client->deleteObject($actor1);
+/*
+ * Be sure that getters work
+ */
+$public_stream = $client->getStreamById($public_stream->getId());
+assert($public_stream->getName() == 'Public TestStream');
+$blog = $client->getObjectById($blog->getId());
+assert($blog->getUrl() == 'http://dracoblue.net');
+$actor1_values = $actor1->getValues();
+assert($actor1_values['displayName'] === 'User1');
+/*
+ * Try to get a nonexisting link
+ */
+try
+{
+    $blog->getLink('DOESNOTEXIST');
+    assert(false);
+}
+catch (Exception $exception)
+{
+    
+}
+
+$client->deleteStream($public_stream);
+$private_stream->delete();
+$client->deleteObject($actor1);
+$blog->delete();
+$client->deleteObject($second_blog);
