@@ -1,5 +1,9 @@
 # activitystreams-php
 
+* Version: 1.0-dev
+* Date: Not yet released
+* Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/activitystreams-php.png?branch=master)](http://travis-ci.org/DracoBlue/activitystreams-php), 100% Code Coverage
+
 This is an activity stream server and client. It's intended to implement a RESTful service to create, publish, (un)subscribe activity streams (according to the "JSON Activity Streams 1.0"[1]).
 
   [1]: http://activitystrea.ms/specs/json/1.0/
