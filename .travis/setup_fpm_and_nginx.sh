@@ -1,6 +1,6 @@
 #!/bin/bash
 apt-get install nginx
-apt-get install php5-fpm
+apt-get install php5-fpm php5-mysql
 cd `dirname $0`
 cp nginx.conf /etc/nginx/nginx.conf
 /etc/init.d/nginx restart
