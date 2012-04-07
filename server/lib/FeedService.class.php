@@ -58,7 +58,7 @@ class FeedService implements HttpResourceService
                 stream_id IN (SELECT stream_id FROM activity_stream_subscriptions WHERE object_id = ?)
             )
             
-            ORDER BY timestamp DESC LIMIT ' . $offset . ', ' . $limit . '
+            ORDER BY published DESC LIMIT ' . $offset . ', ' . $limit . '
         ', array(
             $object_id,
             $object_id

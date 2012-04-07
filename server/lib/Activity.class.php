@@ -10,9 +10,9 @@ class Activity
     
     public function getPublished()
     {
-        $timestamp = new DateTime($this->data['timestamp']);
+        $published = new DateTime($this->data['published']);
         
-        return $timestamp->format(DateTime::RFC3339);
+        return $published->format(DateTime::RFC3339);
     }
     
     public function getId()
