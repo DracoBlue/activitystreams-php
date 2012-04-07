@@ -98,6 +98,11 @@ class HttpResourceDispatcherService
         }
         else
         {
+            if ($response === null)
+            {
+                return '';
+            }
+            
             return call_user_func_array(array(
                 $service,
                 'convertResourceToJson'
