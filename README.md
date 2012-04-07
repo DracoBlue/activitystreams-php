@@ -1,4 +1,4 @@
-# ActivityStreamServer
+# activitystreams.php
 
 This is an activity stream server and client. It's intended to implement a RESTful service to create, publish, (un)subscribe activity streams (according to the "JSON Activity Streams 1.0"[1]).
 
