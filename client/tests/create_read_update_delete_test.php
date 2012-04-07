@@ -20,7 +20,7 @@ $activity_data = $client->createActivity($public_stream, array('verb' => 'post',
 sleep(1.1);
 
 $second_blog = $client->createObject(array('url' => 'http://webdevberlin.com'));
-$activity_data = $client->createActivity($private_stream, array('verb' => 'post', 'title' => 'I posted a (private) new link'), $actor1, $second_blog);
+$activity_data = $client->createActivity($private_stream, array('verb' => 'post', 'title' => 'I posted a (private) new link', 'bar_attribute' => 1337), $actor1, $second_blog);
 
 /*
  * Get the feed (should only include the public stream post)

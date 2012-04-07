@@ -1,0 +1,10 @@
+language: php
+php:
+  - 5.3
+  - 5.4
+before_script:
+  - git clone git://github.com/DracoBlue/naith.git
+  - mysql -e 'create database naith;'
+  - mysql naith < server/initial_database.sql
+  - sudo ./.travis/setup_fpm_and_nginx_for_travis.sh
+script: cd client && ../naith/naith run
