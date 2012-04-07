@@ -8,6 +8,13 @@ class Activity
         $this->data = $data;
     }
     
+    public function getPublished()
+    {
+        $timestamp = new DateTime($this->data['timestamp']);
+        
+        return $timestamp->format(DateTime::RFC3339);
+    }
+    
     public function getId()
     {
         return $this->data['id'];

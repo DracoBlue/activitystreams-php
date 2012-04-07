@@ -31,6 +31,7 @@ class FeedService implements HttpResourceService
             
             $converted_activities[] = array(
                 'id' => $activity->getId(),
+                'published' => $activity->getPublished(),
                 'title' => $activity->getTitle(),
                 'object' => $activity->getObject(),
                 'actor' => $actor_values
