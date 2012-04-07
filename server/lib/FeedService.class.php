@@ -15,30 +15,10 @@ class FeedService implements HttpResourceService
     {
         $converted_activities = array();
 
-        $object_service = Services::get('Object');
-
         foreach ($feed->getActivities() as $activity)
         {
-            $activity_data = array();
-            $activity_data['published'] = $activity->getPublished();
-            $activity_data['title'] = $activity->getTitle();
-            $activity_data['id'] = $activity->getId();
-            
-            if ($activity->getActorId())
-            {
-                $activity_data['actor'] = $object_service->getObject($activity->getActorId())->getValues();
-            }
-            
-            if ($activity->getObjectId())
-            {
-                $activity_data['object'] = $object_service->getObject($activity->getObjectId())->getValues();
-            }
-            
-            if ($activity->getTargetId())
-            {
-                $activity_data['target'] = $object_service->getObject($activity->getTargetId())->getValues();
-            }
-            
+            $activity_data = $activity->getValues();
+
             $converted_activities[] = $activity_data;
         }
 

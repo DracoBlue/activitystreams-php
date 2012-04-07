@@ -13,10 +13,7 @@ class ActivityService implements HttpResourceService
 
     public function convertResourceToJson(Activity $activity)
     {
-        return json_encode(array(
-            'id' => $activity->getId(),
-            'title' => $activity->getTitle()
-        ));
+        return json_encode($activity->getValues());
     }
 
     /**

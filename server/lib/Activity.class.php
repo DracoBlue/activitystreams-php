@@ -42,7 +42,29 @@ class Activity
     
     public function getValues()
     {
+        $object_service = Services::get('Object');
+        
         $values = json_decode($this->data['values'], true);
+        $values['published'] = $this->getPublished();
+        $values['title'] = $this->getTitle();
+        $values['id'] = $this->getId();
+        
+        if ($this->getActorId())
+        {
+            $values['actor'] = $object_service->getObject($this->getActorId())->getValues();
+        }
+        
+        if ($this->getObjectId())
+        {
+            $values['object'] = $object_service->getObject($this->getObjectId())->getValues();
+        }
+        
+        if ($this->getTargetId())
+        {
+            $values['target'] = $object_service->getObject($this->getTargetId())->getValues();
+        }
+        
+            
         return $values;
     }
 }
