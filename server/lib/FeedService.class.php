@@ -50,12 +50,12 @@ class FeedService implements HttpResourceService
         $db_service = Services::get('Database');
         $rows = $db_service->getTableRows('activities', '
             (
-                stream_id IN (SELECT id FROM activity_streams WHERE auto_subscribe = 1)
-                AND stream_id NOT IN (SELECT stream_id FROM activity_stream_unsubscriptions WHERE object_id = ?)
+                stream_id IN (SELECT id FROM streams WHERE auto_subscribe = 1)
+                AND stream_id NOT IN (SELECT stream_id FROM unsubscriptions WHERE object_id = ?)
             )
             OR
             (
-                stream_id IN (SELECT stream_id FROM activity_stream_subscriptions WHERE object_id = ?)
+                stream_id IN (SELECT stream_id FROM subscriptions WHERE object_id = ?)
             )
             
             ORDER BY published DESC LIMIT ' . $offset . ', ' . $limit . '

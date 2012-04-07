@@ -41,14 +41,14 @@ class SubscriptionService implements HttpResourceService
 
         $object_id = $values['object_id'];
 
-        $rows = $db_service->getTableRows('activity_streams', '
+        $rows = $db_service->getTableRows('streams', '
             (
-                id IN (SELECT id FROM activity_streams WHERE auto_subscribe = 1)
-                AND id NOT IN (SELECT stream_id FROM activity_stream_unsubscriptions WHERE object_id = ?)
+                auto_subscribe = 1
+                AND id NOT IN (SELECT stream_id FROM unsubscriptions WHERE object_id = ?)
             )
             OR
             (
-                id IN (SELECT stream_id FROM activity_stream_subscriptions WHERE object_id = ?)
+                id IN (SELECT stream_id FROM subscriptions WHERE object_id = ?)
             )
         ', array(
             $object_id,
@@ -82,14 +82,14 @@ class SubscriptionService implements HttpResourceService
         $stream = $stream_service->getStream($stream_id);
         $object = $object_service->getObject($values['object_id']);
 
-        $db_service->deleteTableRows('activity_stream_subscriptions', 'object_id = ? AND stream_id = ?', array(
+        $db_service->deleteTableRows('subscriptions', 'object_id = ? AND stream_id = ?', array(
             $object->getId(),
             $stream->getId()
         ));
 
         if ($stream->isAutoSubscribe())
         {
-            $db_service->createTableRow('activity_stream_unsubscriptions', array(
+            $db_service->createTableRow('unsubscriptions', array(
                 'object_id' => $object->getId(),
                 'stream_id' => $stream->getId(),
             ));
@@ -115,14 +115,14 @@ class SubscriptionService implements HttpResourceService
         $stream = $stream_service->getStream($values['stream_id']);
         $object = $object_service->getObject($values['object_id']);
 
-        $db_service->deleteTableRows('activity_stream_unsubscriptions', 'object_id = ? AND stream_id = ?', array(
+        $db_service->deleteTableRows('unsubscriptions', 'object_id = ? AND stream_id = ?', array(
             $object->getId(),
             $stream->getId()
         ));
 
         if (!$stream->isAutoSubscribe())
         {
-            $db_service->createTableRow('activity_stream_subscriptions', array(
+            $db_service->createTableRow('subscriptions', array(
                 'object_id' => $object->getId(),
                 'stream_id' => $stream->getId(),
             ));

@@ -44,7 +44,7 @@ class StreamService implements HttpResourceService
         $stream_id = $values['stream_id'];
 
         $streams = array();
-        foreach ($db_service->getTableRows('activity_streams', 'id = ?', array($stream_id)) as $row)
+        foreach ($db_service->getTableRows('streams', 'id = ?', array($stream_id)) as $row)
         {
             $streams[] = new Stream($row);
         }
@@ -58,7 +58,7 @@ class StreamService implements HttpResourceService
     public function getStream($stream_id, array $values = array())
     {
         $db_service = Services::get('Database');
-        $row = $db_service->getTableRow('activity_streams', 'id = ?', array($stream_id));
+        $row = $db_service->getTableRow('streams', 'id = ?', array($stream_id));
         return new Stream($row);
     }
 
@@ -68,11 +68,11 @@ class StreamService implements HttpResourceService
 
         $stream = $this->getStream($stream_id);
 
-        $db_service->deleteTableRows('activity_stream_subscriptions', 'stream_id = ?', array($stream_id));
-        $db_service->deleteTableRows('activity_stream_unsubscriptions', 'stream_id = ?', array($stream_id));
+        $db_service->deleteTableRows('subscriptions', 'stream_id = ?', array($stream_id));
+        $db_service->deleteTableRows('unsubscriptions', 'stream_id = ?', array($stream_id));
         $db_service->deleteTableRows('activities', 'stream_id = ?', array($stream_id));
 
-        $db_service->deleteTableRow('activity_streams', 'id = ?', array($stream_id));
+        $db_service->deleteTableRow('streams', 'id = ?', array($stream_id));
     }
 
     /**
@@ -92,7 +92,7 @@ class StreamService implements HttpResourceService
 
         $raw_values['auto_subscribe'] = $values['auto_subscribe'] ? 1 : 0;
 
-        $stream_id = $db_service->createTableRow('activity_streams', $raw_values);
+        $stream_id = $db_service->createTableRow('streams', $raw_values);
 
         return $this->getStream($stream_id);
     }

@@ -67,8 +67,8 @@ class ObjectService implements HttpResourceService
 
         $object = $this->getObject($object_id);
 
-        $db_service->deleteTableRows('activity_stream_subscriptions', 'object_id = ?', array($object_id));
-        $db_service->deleteTableRows('activity_stream_unsubscriptions', 'object_id = ?', array($object_id));
+        $db_service->deleteTableRows('subscriptions', 'object_id = ?', array($object_id));
+        $db_service->deleteTableRows('unsubscriptions', 'object_id = ?', array($object_id));
 
         $db_service->deleteTableRow('objects', 'id = ?', array($object_id));
     }
