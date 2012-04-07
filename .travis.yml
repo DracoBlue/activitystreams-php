@@ -6,5 +6,5 @@ before_script:
   - git clone git://github.com/DracoBlue/naith.git
   - mysql -e 'create database naith;'
   - mysql naith < server/initial_database.sql
-  - sudo ./.travis/setup_fpm_and_nginx_for_travis.sh
+  - sudo ./.travis/setup_fpm_and_nginx.sh
 script: cd client && ../naith/naith run
