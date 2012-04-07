@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors', 'On');
 require_once(dirname(dirname(__FILE__)) . '/lib/Services.class.php');
 require_once(dirname(dirname(__FILE__)) . '/global.config.php');
 require_once(dirname(dirname(__FILE__)) . '/local.config.php');
