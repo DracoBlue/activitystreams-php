@@ -62,6 +62,11 @@ class HttpClientService
         {
             throw new Exception('Requesting ' . $options[CURLOPT_URL] . ' failed with status code ' . $status['http_code'] . ' and response: ' . $response);
         }
+        
+        echo PHP_EOL;
+        var_dump($method . ' ' . $options[CURLOPT_URL]);
+        echo $response;
+        echo PHP_EOL;
 
         return $response;
     }
@@ -73,8 +78,6 @@ class HttpClientService
 
     public function post($url, array $values = array(), $auth = array())
     {
-        echo $url;
-        print_r($values);
         $encoded_values = array();
         foreach ($values as $key => $value)
         {
