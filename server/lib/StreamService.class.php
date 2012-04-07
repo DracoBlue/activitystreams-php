@@ -36,8 +36,15 @@ class StreamService implements HttpResourceService
     {
         $db_service = Services::get('Database');
 
+        if (!isset($values['stream_id']))
+        {
+            throw new Exception('Cannot search for streams if no stream_id is given!');    
+        }
+        
+        $stream_id = $values['stream_id'];
+
         $streams = array();
-        foreach ($db_service->getTableRows('activity_streams') as $row)
+        foreach ($db_service->getTableRows('activity_streams', 'id = ?', array($stream_id)) as $row)
         {
             $streams[] = new Stream($row);
         }

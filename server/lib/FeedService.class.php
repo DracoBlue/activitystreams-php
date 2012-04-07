@@ -23,8 +23,12 @@ class FeedService implements HttpResourceService
             $actor_values = $actor->getValues();
             $actor_values['id'] = $actor->getId();
             $actor_values['displayName'] = $actor->getName();
-            $actor_values['objectType'] = $actor->getObjectType();
-
+            
+            if ($actor->getObjectType())
+            {
+                $actor_values['objectType'] = $actor->getObjectType();
+            }
+            
             $converted_activities[] = array(
                 'id' => $activity->getId(),
                 'title' => $activity->getTitle(),

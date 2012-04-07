@@ -25,6 +25,13 @@ class Activity
     
     public function getObject()
     {
-        return json_decode($this->data['object'], true);
+        $object = json_decode($this->data['object'], true);
+        
+        if (isset($this->data['object_type']) && $this->data['object_type'])
+        {
+            $object['objectType'] = $this->data['object_type'];
+        }
+        
+        return $object;
     }
 }

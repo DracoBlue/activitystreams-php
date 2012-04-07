@@ -8,13 +8,15 @@ Services::get('JsonHttpClient')->delete(Config::get('endpoint_base_url') . 'api/
 $client = new ActivityStreamClient(Config::get('endpoint_base_url'));
 
 $public_stream = $client->createStream('Public TestStream', true);
+$public_stream = $client->getStreamById($public_stream['id']);
 $private_stream = $client->createStream('Private TestStream', false);
-$actor1 = $client->createActor(array('name' => 'User1', 'fb_id' => '!23'));
+$actor1 = $client->createActor(array('name' => 'User1', 'fb_id' => '!23', 'object_type' => 'person'));
+$actor1 = $client->getActorById($actor1['id']);
 $actor2 = $client->createActor(array('name' => 'User2'));
 print_r($public_stream);
 print_r($actor1);
 
-$activity_data = $client->createActivity($public_stream, $actor1, 'I posted a (public) new link', array('url' => 'http://dracoblue.net'));
+$activity_data = $client->createActivity($public_stream, $actor1, 'I posted a (public) new link', array('object_type' => 'blog', 'url' => 'http://dracoblue.net'));
 
 sleep(1.1);
 

@@ -16,7 +16,12 @@ class ActorService implements HttpResourceService
         $values = $actor->getValues();
         $values['id'] = $actor->getId();
         $values['displayName'] = $actor->getName();
-        $values['objectType'] = $actor->getObjectType();
+                    
+        if ($actor->getObjectType())
+        {
+            $values['objectType'] = $actor->getObjectType();
+        }
+        
         $values['links'] = array(
             array(
                 'rel' => 'feed',
@@ -37,9 +42,16 @@ class ActorService implements HttpResourceService
     public function getActors(array $values)
     {
         $db_service = Services::get('Database');
+        
+        if (!isset($values['actor_id']))
+        {
+            throw new Exception('Cannot search for actors if no actor_id is given!');    
+        }
+        
+        $actor_id = $values['actor_id'];
 
         $actors = array();
-        foreach ($db_service->getTableRows('activity_stream_actors') as $row)
+        foreach ($db_service->getTableRows('activity_stream_actors', 'id = ?', array($actor_id)) as $row)
         {
             $actors[] = new Actor($row);
         }

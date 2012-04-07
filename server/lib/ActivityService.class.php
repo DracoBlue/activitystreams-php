@@ -41,18 +41,29 @@ class ActivityService implements HttpResourceService
         $actor = $actor_service->getActor($values['actor_id']);
         $stream = $stream_service->getStream($values['stream_id']);
 
-        $raw_values = array();
         $raw_values['title'] = $values['title'];
+        unset($values['title']);
         
-        $valid_object = @json_decode($values['object']);
-        if ($valid_object === null && $values['object'] !== 'null')
+        $raw_values['actor_id'] = $actor->getId();
+        unset($values['actor_id']);
+        
+        $raw_values['stream_id'] = $stream->getId();
+        unset($values['stream_id']);
+
+        if (isset($values['object_type']))
         {
-            throw new Exception('Invalid json in object!');
+            $raw_values['object_type'] = $values['object_type'];
+            unset($values['object_type']);
         }
         
-        $raw_values['object'] = $values['object'];
-        $raw_values['actor_id'] = $actor->getId();
-        $raw_values['stream_id'] = $stream->getId();
+        /*
+         * Everything else can be set by using the object json
+         * serialized blob
+         */
+        if (!empty($values))
+        {
+            $raw_values['object'] = json_encode($values);
+        }
 
         $activity_id = $db_service->createTableRow('activities', $raw_values);
         
