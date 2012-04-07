@@ -15,27 +15,31 @@ class FeedService implements HttpResourceService
     {
         $converted_activities = array();
 
-        $actor_service = Services::get('Actor');
+        $object_service = Services::get('Object');
 
         foreach ($feed->getActivities() as $activity)
         {
-            $actor = $actor_service->getActor($activity->getActorId());
-            $actor_values = $actor->getValues();
-            $actor_values['id'] = $actor->getId();
-            $actor_values['displayName'] = $actor->getName();
+            $activity_data = array();
+            $activity_data['published'] = $activity->getPublished();
+            $activity_data['title'] = $activity->getTitle();
+            $activity_data['id'] = $activity->getId();
             
-            if ($actor->getObjectType())
+            if ($activity->getActorId())
             {
-                $actor_values['objectType'] = $actor->getObjectType();
+                $activity_data['actor'] = $object_service->getObject($activity->getActorId())->getValues();
             }
             
-            $converted_activities[] = array(
-                'id' => $activity->getId(),
-                'published' => $activity->getPublished(),
-                'title' => $activity->getTitle(),
-                'object' => $activity->getObject(),
-                'actor' => $actor_values
-            );
+            if ($activity->getObjectId())
+            {
+                $activity_data['object'] = $object_service->getObject($activity->getObjectId())->getValues();
+            }
+            
+            if ($activity->getTargetId())
+            {
+                $activity_data['target'] = $object_service->getObject($activity->getTargetId())->getValues();
+            }
+            
+            $converted_activities[] = $activity_data;
         }
 
         return json_encode(array('items' => $converted_activities));
@@ -44,7 +48,7 @@ class FeedService implements HttpResourceService
     /**
      * @return Feed
      */
-    public function getFeed($actor_id, array $values = array())
+    public function getFeed($object_id, array $values = array())
     {
         if (!isset($values['offset']) || !is_numeric($values['offset']) || $values['offset'] < 0)
         {
@@ -67,17 +71,17 @@ class FeedService implements HttpResourceService
         $rows = $db_service->getTableRows('activities', '
             (
                 stream_id IN (SELECT id FROM activity_streams WHERE auto_subscribe = 1)
-                AND stream_id NOT IN (SELECT stream_id FROM activity_stream_unsubscriptions WHERE actor_id = ?)
+                AND stream_id NOT IN (SELECT stream_id FROM activity_stream_unsubscriptions WHERE object_id = ?)
             )
             OR
             (
-                stream_id IN (SELECT stream_id FROM activity_stream_subscriptions WHERE actor_id = ?)
+                stream_id IN (SELECT stream_id FROM activity_stream_subscriptions WHERE object_id = ?)
             )
             
             ORDER BY timestamp DESC LIMIT ' . $offset . ', ' . $limit . '
         ', array(
-            $actor_id,
-            $actor_id
+            $object_id,
+            $object_id
         ));
         return new Feed($rows);
     }

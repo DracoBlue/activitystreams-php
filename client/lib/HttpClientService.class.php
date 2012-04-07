@@ -73,6 +73,8 @@ class HttpClientService
 
     public function post($url, array $values = array(), $auth = array())
     {
+        echo $url;
+        print_r($values);
         $encoded_values = array();
         foreach ($values as $key => $value)
         {

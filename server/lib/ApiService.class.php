@@ -37,8 +37,8 @@ class ApiService implements HttpResourceService
                 'path' => 'stream'
             ),
             array(
-                'name' => 'actors',
-                'path' => 'actor'
+                'name' => 'objects',
+                'path' => 'object'
             )
         );
     }
@@ -51,7 +51,7 @@ class ApiService implements HttpResourceService
         $db_service = Services::get('Database');
         $db_service->deleteTableRows('activities', '1');
         $db_service->deleteTableRows('activity_streams', '1');
-        $db_service->deleteTableRows('activity_stream_actors', '1');
+        $db_service->deleteTableRows('objects', '1');
         $db_service->deleteTableRows('activity_stream_subscriptions', '1');
         $db_service->deleteTableRows('activity_stream_unsubscriptions', '1');
         

@@ -68,40 +68,48 @@ class ActivityStreamClient
     }
 
     /**
-     * @return array the data about the actor
+     * @return array the data about the object
      */
-    public function createActor(array $options)
+    public function createObject(array $options)
     {
-        $actor_data = $this->json_client->post($this->getApiLink('actors'), $options);
-
-        return $actor_data;
+        return $this->json_client->post($this->getApiLink('objects'), $options);
     }
 
     /**
      * @return array the data about the actor
      */
-    public function getActorById($actor_id)
+    public function getObjectById($object_id)
     {
-        $actors_data = $this->json_client->get($this->getApiLink('actors'), array('actor_id' => $actor_id));
+        $objects_data = $this->json_client->get($this->getApiLink('objects'), array('object_id' => $object_id));
 
-        if (count($actors_data) > 0)
+        if (count($objects_data) > 0)
         {
-            return $actors_data[0];
+            return $objects_data[0];
         }
         
-        throw new Exception('Cannot find actor with id ' . $actor_id);
+        throw new Exception('Cannot find object with id ' . $object_id);
     }
     
-    public function deleteActor(array $actor)
+    public function deleteObject(array $actor)
     {
-        $actor_data = $this->json_client->delete($this->getApiLink('actors') . '/' . $actor['id']);
-        return $actor_data;
+        $object_data = $this->json_client->delete($this->getApiLink('objects') . '/' . $actor['id']);
+        return $object_data;
     }
 
-    public function createActivity(array $stream, array $actor, $title, $values)
+    public function createActivity(array $stream, array $actor, array $values, array $object)
     {
-        $values['title'] = $title;
+        if (!isset($object['id']))
+        {
+            $object = $this->createObject($object);
+        }
+        
+        if (!isset($actor['id']))
+        {
+            $actor = $this->createObject($actor);
+        }
+        
         $values['actor_id'] = $actor['id'];
+        $values['object_id'] = $object['id'];
         
         /*
          * Create a new activity in this stream
@@ -111,9 +119,9 @@ class ActivityStreamClient
         return $activity_data;
     }
 
-    public function getFeedForActor($actor, $offset = 0, $limit = 20)
+    public function getFeedForObject($object, $offset = 0, $limit = 20)
     {
-        $activities_data = $this->json_client->get($this->getLinkInObject($actor, 'feed'), array(
+        $activities_data = $this->json_client->get($this->getLinkInObject($object, 'feed'), array(
             'offset' => $offset,
             'limit' => $limit
         ));
@@ -122,7 +130,7 @@ class ActivityStreamClient
 
     public function subscribeActorToStream($actor, $stream)
     {
-        $actor = $this->json_client->post($this->getLinkInObject($stream, 'subscribers'), array('actor_id' => $actor['id']));
+        $actor = $this->json_client->post($this->getLinkInObject($stream, 'subscribers'), array('object_id' => $actor['id']));
         return $actor;
     }
 

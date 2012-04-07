@@ -35,34 +35,44 @@ class ActivityService implements HttpResourceService
     public function postActivity(array $values)
     {
         $db_service = Services::get('Database');
-        $actor_service = Services::get('Actor');
+        $object_service = Services::get('Object');
         $stream_service = Services::get('Stream');
         
-        $actor = $actor_service->getActor($values['actor_id']);
         $stream = $stream_service->getStream($values['stream_id']);
+        $raw_values['stream_id'] = $stream->getId();
+        unset($values['stream_id']);
 
         $raw_values['title'] = $values['title'];
         unset($values['title']);
         
-        $raw_values['actor_id'] = $actor->getId();
-        unset($values['actor_id']);
+        $raw_values['verb'] = $values['verb'];
+        unset($values['verb']);
         
-        $raw_values['stream_id'] = $stream->getId();
-        unset($values['stream_id']);
-
-        if (isset($values['object_type']))
+        if (isset($values['object_id']))
         {
-            $raw_values['object_type'] = $values['object_type'];
-            unset($values['object_type']);
+            $raw_values['object_id'] = $object_service->getObject($values['object_id'])->getId();
+            unset($values['object_id']);
         }
         
+        if (isset($values['actor_id']))
+        {
+            $raw_values['actor_id'] = $object_service->getObject($values['actor_id'])->getId();
+            unset($values['actor_id']);
+        }
+        
+        if (isset($values['target_id']))
+        {
+            $raw_values['target_id'] = $object_service->getObject($values['target_id'])->getId();
+            unset($values['target_id']);
+        }
+
         /*
-         * Everything else can be set by using the object json
+         * Everything else can be set by using the values json
          * serialized blob
          */
         if (!empty($values))
         {
-            $raw_values['object'] = json_encode($values);
+            $raw_values['values'] = json_encode($values);
         }
 
         $activity_id = $db_service->createTableRow('activities', $raw_values);

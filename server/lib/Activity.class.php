@@ -30,15 +30,19 @@ class Activity
         return $this->data['actor_id'];
     }
     
-    public function getObject()
+    public function getObjectId()
     {
-        $object = json_decode($this->data['object'], true);
-        
-        if (isset($this->data['object_type']) && $this->data['object_type'])
-        {
-            $object['objectType'] = $this->data['object_type'];
-        }
-        
-        return $object;
+        return $this->data['object_id'];
+    }
+    
+    public function getTargetId()
+    {
+        return $this->data['target_id'];
+    }
+    
+    public function getValues()
+    {
+        $values = json_decode($this->data['values'], true);
+        return $values;
     }
 }
