@@ -39,7 +39,7 @@ class AsClient extends AsResource
 
     public function deleteApplication(AsApplication $application)
     {
-        $this->delete($application->getLink('delete'));
+        $this->delete($application->getLink('delete'), array(), array($application->getId(), $application->getSecret()));
     }
 
     protected function rawRequest($method, $url, array $options, array $values, array $auth)

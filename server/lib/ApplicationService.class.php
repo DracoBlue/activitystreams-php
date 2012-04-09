@@ -35,6 +35,13 @@ class ApplicationService extends HttpResourceService
      */
     public function getApplication($application_id, array $values = array())
     {
+        $logged_in_application_id = $this->getAuthenticatedApplicationId();
+        
+        if ($logged_in_application_id !== $application_id)
+        {
+            throw new Exception('Cannot retrieve this application!');
+        }
+        
         $db_service = Services::get('Database');
         return $db_service->getTableRow('applications', 'id = ?', array($application_id));
     }
@@ -60,9 +67,22 @@ class ApplicationService extends HttpResourceService
         $db_service = Services::get('Database');
         return $db_service->getTableRows('applications', 'id = ? and secret = ?', array($application_id, $secret));
     }
+    
+    public function getApplicationByIdAndSecret($application_id, $secret)
+    {
+        $db_service = Services::get('Database');
+        return $db_service->getTableRow('applications', 'id = ? and secret = ?', array($application_id, $secret));
+    }
 
     public function deleteApplication($application_id, array $values = array())
     {
+        $logged_in_application_id = $this->getAuthenticatedApplicationId();
+        
+        if ($logged_in_application_id !== $application_id)
+        {
+            throw new Exception('Cannot delete this application!');
+        }
+
         $db_service = Services::get('Database');
         $db_service->deleteTableRows('objects', 'application_id = ?', array($application_id));
         $db_service->deleteTableRow('applications', 'id = ?', array($application_id));
@@ -89,6 +109,9 @@ class ApplicationService extends HttpResourceService
         $raw_values['secret'] = $db_service->generateUuid(32);
         
         $application_id = $db_service->createTableRow('applications', $raw_values);
+        
+        $_SERVER['PHP_AUTH_USER'] = $application_id;
+        $_SERVER['PHP_AUTH_PW'] = $raw_values['secret']; 
         
         return $this->getApplication($application_id);
     }
