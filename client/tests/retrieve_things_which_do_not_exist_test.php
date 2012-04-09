@@ -7,6 +7,16 @@ $application = $client->createApplication('my_app', array('name' => 'Test Applic
 
 try
 {
+    $client->getApplicationByIdAndSecret($application->getId(), $application->getSecret() . '___');
+    assert(false);
+}
+catch (Exception $exception)
+{
+
+}
+
+try
+{
     $application->getLink('doesnotexist');
     assert(false);
 }
@@ -35,3 +45,14 @@ catch (Exception $exception)
 }
 
 $client->deleteApplication($application);
+
+
+try
+{
+    $client->getApplicationByIdAndSecret('doesnotexist', 'is_wrong');
+    assert(false);
+}
+catch (Exception $exception)
+{
+
+}

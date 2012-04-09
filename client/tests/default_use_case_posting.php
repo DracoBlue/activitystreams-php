@@ -5,8 +5,8 @@ $media_comments_stream = $application->createStream('media_comments');
 $private_stream = $application->createStream('private_stream', array('auto_subscribe' => 0));
 $guest = $application->createObject('guest');
 
-$media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'));
-$private_stream->createActivity(array('title' => 'I posted a link2!', 'verb' => 'post'));
+$media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'), $guest);
+$private_stream->createActivity(array('title' => 'I posted a link2!', 'verb' => 'post'), $guest);
 
 $activites = $guest->getFeed();
 assert(count($activites) == 1);

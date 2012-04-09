@@ -1,5 +1,5 @@
 <?php
-class StreamService implements HttpResourceService
+class StreamService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {
@@ -19,15 +19,15 @@ class StreamService implements HttpResourceService
             'links' => array(
                 array(
                     'rel' => 'delete',
-                    'href' => Config::get('endpoint_base_url') . 'stream/' . urlencode($stream->getId()) . '?application_id=' . urlencode($stream->getApplicationId())
+                    'href' => Config::get('endpoint_base_url') . 'stream/' . urlencode($stream->getId())
                 ),
                 array(
                     'rel' => 'activities',
-                    'href' => Config::get('endpoint_base_url') . 'activity?application_id=' . urlencode($stream->getApplicationId()) . '&stream_id=' . urlencode($stream->getId())
+                    'href' => Config::get('endpoint_base_url') . 'activity?stream_id=' . urlencode($stream->getId())
                 ),
                 array(
                     'rel' => 'subscribers',
-                    'href' => Config::get('endpoint_base_url') . 'subscription?application_id=' . urlencode($stream->getApplicationId()) . '&stream_id=' . urlencode($stream->getId())
+                    'href' => Config::get('endpoint_base_url') . 'subscription?stream_id=' . urlencode($stream->getId())
                 )
             )
         ));
@@ -40,18 +40,13 @@ class StreamService implements HttpResourceService
     {
         $db_service = Services::get('Database');
 
-        if (!isset($values['application_id']))
-        {
-            throw new Exception('Cannot search for streams if no application_id is given!');    
-        }
-        
         if (!isset($values['stream_id']))
         {
             throw new Exception('Cannot search for streams if no stream_id is given!');    
         }
         
         $stream_id = $values['stream_id'];
-        $application_id = $values['application_id'];
+        $application_id = $this->getAuthenticatedApplicationId();
 
         $streams = array();
         foreach ($db_service->getTableRows('streams', 'id = ? and application_id = ?', array($stream_id, $application_id)) as $row)
@@ -67,12 +62,8 @@ class StreamService implements HttpResourceService
      */
     public function getStream($stream_id, array $values = array())
     {
-        if (!isset($values['application_id']))
-        {
-            throw new Exception('Cannot search for streams if no application_id is given!');    
-        }
+        $application_id = $this->getAuthenticatedApplicationId();
         
-        $application_id = $values['application_id'];
         $db_service = Services::get('Database');
         $row = $db_service->getTableRow('streams', 'id = ? AND application_id = ?', array($stream_id, $application_id));
         return new Stream($row);
@@ -80,9 +71,10 @@ class StreamService implements HttpResourceService
 
     public function deleteStream($stream_id, array $values = array())
     {
+        $application_id = $this->getAuthenticatedApplicationId();
+        
         $db_service = Services::get('Database');
-        $stream = $this->getStream($stream_id, $values);
-        $application_id = $stream->getApplicationId();
+        $stream = $this->getStream($stream_id);
 
         $db_service->deleteTableRows('subscriptions', 'stream_id = ? AND application_id = ?', array($stream_id, $application_id));
         $db_service->deleteTableRows('unsubscriptions', 'stream_id = ? AND application_id = ?', array($stream_id, $application_id));
@@ -99,7 +91,7 @@ class StreamService implements HttpResourceService
 
         $raw_values = array();
         
-        $application_id = $values['application_id'];
+        $application_id = $this->getAuthenticatedApplicationId();
         $raw_values['application_id'] = $application_id;
         $raw_values['id'] = $values['id'];
         

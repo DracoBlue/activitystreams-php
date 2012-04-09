@@ -1,6 +1,6 @@
 <?php
 
-class ActivityStreamObject
+class AsObject
 {
     protected $data = array();
     

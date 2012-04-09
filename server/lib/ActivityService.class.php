@@ -1,5 +1,5 @@
 <?php
-class ActivityService implements HttpResourceService
+class ActivityService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {
@@ -21,8 +21,9 @@ class ActivityService implements HttpResourceService
      */
     public function getActivity($activity_id, array $values = array())
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
-        $row = $db_service->getTableRow('activities', 'id = ?', array($activity_id));
+        $row = $db_service->getTableRow('activities', 'id = ? AND application_id = ?', array($activity_id, $application_id));
         return new Activity($row);
     }
 
@@ -31,11 +32,11 @@ class ActivityService implements HttpResourceService
      */
     public function postActivity(array $values)
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
         $object_service = Services::get('Object');
         $stream_service = Services::get('Stream');
         
-        $application_id = $values['application_id'];
         $raw_values['application_id'] = $application_id;
         unset($values['application_id']);
         

@@ -10,6 +10,11 @@ class AsApplication extends AsResource
         $this->client = $client;
     }
     
+    protected function getAuth()
+    {
+        return array($this->getId(), $this->getSecret());
+    }
+    
     public function getId()
     {
         return $this->data['id'];
@@ -22,7 +27,7 @@ class AsApplication extends AsResource
     
     public function getStreamById($stream_id)
     {
-        $streams = $this->client->get($this->getLink('streams'), array('stream_id' => $stream_id));
+        $streams = $this->client->get($this->getLink('streams'), array('stream_id' => $stream_id), $this->getAuth());
         
         if (count($streams) == 0)
         {
@@ -35,18 +40,18 @@ class AsApplication extends AsResource
     public function createStream($id, array $values = array())
     {
         $values['id'] = $id;
-        $stream = $this->client->post($this->getLink('streams'), $values);
+        $stream = $this->client->post($this->getLink('streams'), $values, $this->getAuth());
         return new AsStream($this, $stream);
     }
 
     public function deleteStream(AsStream $stream)
     {
-        $this->client->delete($stream->getLink('delete'));
+        $this->client->delete($stream->getLink('delete'), array(), $this->getAuth());
     }
 
     public function getObjectById($object_id)
     {
-        $objects = $this->client->get($this->getLink('objects'), array('object_id' => $object_id));
+        $objects = $this->client->get($this->getLink('objects'), array('object_id' => $object_id), $this->getAuth());
         
         if (count($objects) == 0)
         {
@@ -59,19 +64,19 @@ class AsApplication extends AsResource
     public function createObject($id, array $values = array())
     {
         $values['id'] = $id;
-        $object = $this->client->post($this->getLink('objects'), $values);
+        $object = $this->client->post($this->getLink('objects'), $values, $this->getAuth());
         return new AsObject($this, $object);
     }
     
     public function deleteObject(AsObject $object)
     {
-        $this->client->delete($object->getLink('delete'));
+        $this->client->delete($object->getLink('delete'), array(), $this->getAuth());
     }
     
     public function createActivityInStream(AsStream $stream, array $values, AsObject $actor = null, AsObject $object = null, AsObject $target = null)
     {
         $values['stream_id'] = $stream->getId();
-        $this->client->post($stream->getLink('activities'), $values);
+        $this->client->post($stream->getLink('activities'), $values, $this->getAuth());
     }
     
     public function getFeedForObject(AsObject $object, $offset = 0, $limit = 20)
@@ -81,7 +86,7 @@ class AsApplication extends AsResource
             'limit' => $limit
         );
         
-        $raw_feed = $this->client->get($object->getLink('feed'), $values);
+        $raw_feed = $this->client->get($object->getLink('feed'), $values, $this->getAuth());
         
         $activities = array();
         
@@ -95,19 +100,19 @@ class AsApplication extends AsResource
     
     public function subscribeObjectToStream(AsObject $object, AsStream $stream)
     {
-        $this->client->post($stream->getLink('subscribers'), array('object_id' => $object->getId()));
+        $this->client->post($stream->getLink('subscribers'), array('object_id' => $object->getId()), $this->getAuth());
     }
 
     public function unsubscribeObjectFromStream(AsObject $object, $stream)
     {
-        $subscriptions = $this->client->get($object->getLink('subscriptions'));
+        $subscriptions = $this->client->get($object->getLink('subscriptions'), array(), $this->getAuth());
 
         foreach ($subscriptions as $subscription_data)
         {
             $subscription = new AsSubscription($this, $subscription_data);
             if ($subscription->getStreamId() == $stream->getId() && $subscription->getObjectId() == $object->getId())
             {
-                $this->client->delete($subscription->getLink('unsubscribe'));
+                $this->client->delete($subscription->getLink('unsubscribe'), array(), $this->getAuth());
             }
         }
     }

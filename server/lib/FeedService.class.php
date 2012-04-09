@@ -1,5 +1,5 @@
 <?php
-class FeedService implements HttpResourceService
+class FeedService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {

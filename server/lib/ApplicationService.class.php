@@ -1,5 +1,5 @@
 <?php
-class ApplicationService implements HttpResourceService
+class ApplicationService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {
@@ -20,11 +20,11 @@ class ApplicationService implements HttpResourceService
             ),
             array(
                 'rel' => 'streams',
-                'href' => Config::get('endpoint_base_url') . 'stream?application_id=' . urlencode($application['id'])
+                'href' => Config::get('endpoint_base_url') . 'stream'
             ),
             array(
                 'rel' => 'objects',
-                'href' => Config::get('endpoint_base_url') . 'object?application_id=' . urlencode($application['id'])
+                'href' => Config::get('endpoint_base_url') . 'object'
             )
         );
         return json_encode($application);

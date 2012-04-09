@@ -31,7 +31,7 @@ class HttpResourceDispatcherService
         {
             throw new Exception('The requested resource does not implement the HttpResourceService interface.');
         }
-
+        
         $path_parts_without_resource_name = array_slice($path_parts, 1);
 
         $method_name = null;

@@ -1,6 +1,6 @@
 <?php
 
-class ApiService implements HttpResourceService
+class ApiService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {

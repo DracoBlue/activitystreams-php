@@ -51,7 +51,7 @@ class AsClient extends AsResource
 
         if (count($auth))
         {
-            $default_options[CURLOPT_HTTPAUTH] = CURLAUTH_DIGEST;
+            $default_options[CURLOPT_HTTPAUTH] = CURLAUTH_BASIC;
             $default_options[CURLOPT_USERPWD] = implode(':', $auth);
         }
 
@@ -62,8 +62,10 @@ class AsClient extends AsResource
             {
                 $encoded_values[] = urlencode($key) . '=' . urlencode($value);
             }
+            
 
             $url = $options[CURLOPT_URL];
+            print_r(array($url, $values));
 
             if (strpos($url, '?') === false)
             {
@@ -88,7 +90,7 @@ class AsClient extends AsResource
         {
             curl_setopt($ch, $option, $value);
         }
-
+        
         $raw_response = curl_exec($ch);
         $status = curl_getinfo($ch);
         curl_close($ch);

@@ -1,5 +1,5 @@
 <?php
-class ObjectService implements HttpResourceService
+class ObjectService extends HttpResourceService
 {
     public function getResourceNamePluralized()
     {
@@ -11,7 +11,7 @@ class ObjectService implements HttpResourceService
         return 'Object';
     }
 
-    public function convertResourceToJson(ActivityStreamObject $object)
+    public function convertResourceToJson(AsObject $object)
     {
         $values = $object->getValues();
         $values['links'] = array(
@@ -33,10 +33,11 @@ class ObjectService implements HttpResourceService
     }
 
     /**
-     * @return ActivityStreamObject[]
+     * @return AsObject[]
      */
     public function getObjects(array $values)
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
         
         if (!isset($values['object_id']))
@@ -47,46 +48,48 @@ class ObjectService implements HttpResourceService
         $object_id = $values['object_id'];
 
         $objects = array();
-        foreach ($db_service->getTableRows('objects', 'id = ?', array($object_id)) as $row)
+        foreach ($db_service->getTableRows('objects', 'id = ? AND application_id = ?', array($object_id, $application_id)) as $row)
         {
-            $objects[] = new ActivityStreamObject($row);
+            $objects[] = new AsObject($row);
         }
 
         return $objects;
     }
 
     /**
-     * @return ActivityStreamObject
+     * @return AsObject
      */
     public function getObject($object_id, array $values = array())
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
-        $row = $db_service->getTableRow('objects', 'id = ?', array($object_id));
-        return new ActivityStreamObject($row);
+        $row = $db_service->getTableRow('objects', 'id = ? AND application_id = ?', array($object_id, $application_id));
+        return new AsObject($row);
     }
 
     public function deleteObject($object_id, array $values = array())
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
 
         $object = $this->getObject($object_id);
 
-        $db_service->deleteTableRows('subscriptions', 'object_id = ?', array($object_id));
-        $db_service->deleteTableRows('unsubscriptions', 'object_id = ?', array($object_id));
+        $db_service->deleteTableRows('subscriptions', 'object_id = ? AND application_id = ?', array($object_id, $application_id));
+        $db_service->deleteTableRows('unsubscriptions', 'object_id = ? AND application_id = ?', array($object_id, $application_id));
 
-        $db_service->deleteTableRow('objects', 'id = ?', array($object_id));
+        $db_service->deleteTableRow('objects', 'id = ? AND application_id = ?', array($object_id, $application_id));
     }
 
     /**
-     * @return ActivityStreamObject
+     * @return AsObject
      */
     public function postObject(array $values)
     {
+        $application_id = $this->getAuthenticatedApplicationId();
         $db_service = Services::get('Database');
         $raw_values = array();
         
-        $raw_values['application_id'] = $values['application_id'];
-        unset($values['application_id']);
+        $raw_values['application_id'] = $application_id;
         
         $raw_values['id'] = $values['id'];
         unset($values['id']);
