@@ -15,6 +15,11 @@ class AsApplication extends AsResource
         return $this->data['id'];
     }
     
+    public function getSecret()
+    {
+        return $this->data['secret'];
+    }
+    
     public function getStreamById($stream_id)
     {
         $streams = $this->client->get($this->getLink('streams'), array('stream_id' => $stream_id));

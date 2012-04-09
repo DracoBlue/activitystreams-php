@@ -4,7 +4,7 @@ $application = $client->createApplication('my_app', array('name' => 'Test Applic
 $media_comments_stream = $application->createStream('media_comments');
 $guest = $application->createObject('guest');
 
-$application_retrieved = $client->getApplicationById($application->getId());
+$application_retrieved = $client->getApplicationByIdAndSecret($application->getId(), $application->getSecret());
 assert($application_retrieved->getId() == $application->getId());
 
 $media_comments_stream_retrieved = $application->getStreamById($media_comments_stream->getId());

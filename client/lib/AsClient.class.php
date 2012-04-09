@@ -13,13 +13,13 @@ class AsClient extends AsResource
         parent::__construct($this->get($this->endpoint_url));
     }
 
-    public function getApplicationById($application_id)
+    public function getApplicationByIdAndSecret($application_id, $secret)
     {
-        $applications_data = $this->get($this->getLink('applications'), array('application_id' => $application_id));
+        $applications_data = $this->get($this->getLink('applications'), array('application_id' => $application_id, 'secret' => $secret));
 
         if (count($applications_data) == 0)
         {
-            throw new Exception('Cannot find application with id: ' . $application_id);
+            throw new Exception('Cannot find application with id: ' . $application_id . ' and this secret.');
         }
 
         return new AsApplication($this, $applications_data[0]);

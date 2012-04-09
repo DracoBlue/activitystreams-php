@@ -49,10 +49,16 @@ class ApplicationService implements HttpResourceService
             throw new Exception('Cannot filter for applications, if no application_id is given!');
         }
         
+        if (!isset($values['secret']))
+        {
+            throw new Exception('Cannot filter for applications, if no application_id is given!');
+        }
+        
         $application_id = $values['application_id'];
+        $secret = $values['secret'];
         
         $db_service = Services::get('Database');
-        return $db_service->getTableRows('applications', 'id = ?', array($application_id));
+        return $db_service->getTableRows('applications', 'id = ? and secret = ?', array($application_id, $secret));
     }
 
     public function deleteApplication($application_id, array $values = array())
