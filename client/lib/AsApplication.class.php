@@ -95,7 +95,6 @@ class AsApplication extends AsResource
 
     public function unsubscribeObjectFromStream(AsObject $object, $stream)
     {
-        echo $object->getLink('subscriptions');
         $subscriptions = $this->client->get($object->getLink('subscriptions'));
 
         foreach ($subscriptions as $subscription_data)

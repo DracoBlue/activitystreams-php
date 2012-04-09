@@ -149,7 +149,6 @@ class AsClient extends AsResource
     public static function autoload($class_name)
     {
         $file = dirname(__FILE__) . '/' . $class_name . '.class.php';
-        echo "$file";
         if (file_exists($file))
         {
             require_once($file);
