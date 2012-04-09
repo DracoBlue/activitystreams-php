@@ -12,6 +12,11 @@ class AsClient extends AsResource
         $this->endpoint_url = $endpoint_url;
         parent::__construct($this->get($this->endpoint_url));
     }
+    
+    public function getEndpointUrl()
+    {
+        return $this->endpoint_url;
+    }
 
     public function getApplicationByIdAndSecret($application_id, $secret)
     {
