@@ -6,7 +6,7 @@ $private_stream = $application->createStream('private_stream', array('auto_subsc
 $guest = $application->createObject('guest');
 
 $media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'), $guest);
-$private_stream->createActivity(array('title' => 'I posted a link2!', 'verb' => 'post'), $guest);
+$private_stream->createActivity(array('title' => 'I posted a link2!', 'verb' => 'post'), $guest, $guest, $guest);
 
 $activites = $guest->getFeed();
 assert(count($activites) == 1);
