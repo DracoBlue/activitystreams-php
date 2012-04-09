@@ -2,6 +2,13 @@
 
 class AsResource
 {
+    protected $data = array();
+    
+    function __construct(array $data)
+    {
+        $this->data = $data;    
+    }
+    
     public function getLink($rel)
     {
         if (isset($this->data) && isset($this->data['links']))

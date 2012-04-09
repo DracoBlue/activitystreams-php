@@ -21,7 +21,11 @@ class ObjectService implements HttpResourceService
             ),
             array(
                 'rel' => 'subscriptions',
-                'href' => Config::get('endpoint_base_url') . 'subscription?object_id=' . urlencode($object->getId())
+                'href' => Config::get('endpoint_base_url') . 'subscription?object_id=' . urlencode($object->getId()) . '&application_id=' . urlencode($object->getApplicationId())
+            ),
+            array(
+                'rel' => 'delete',
+                'href' => Config::get('endpoint_base_url') . 'object/' . urlencode($object->getId())
             )
         );
 
@@ -80,6 +84,12 @@ class ObjectService implements HttpResourceService
     {
         $db_service = Services::get('Database');
         $raw_values = array();
+        
+        $raw_values['application_id'] = $values['application_id'];
+        unset($values['application_id']);
+        
+        $raw_values['id'] = $values['id'];
+        unset($values['id']);
         
         if (isset($values['url']))
         {

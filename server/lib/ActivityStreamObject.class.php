@@ -33,6 +33,11 @@ class ActivityStreamObject
         return $this->data['id'];
     }
     
+    public function getApplicationId()
+    {
+        return $this->data['application_id'];
+    }
+    
     public function getUrl()
     {
         return $this->data['url'];

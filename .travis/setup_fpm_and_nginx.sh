@@ -8,4 +8,4 @@ echo "Restart NGINX"
 echo "Restart PHP-FPM"
 /etc/init.d/php5-fpm restart
 cp server.config.php ../server/local.config.php
-cp client.config.php ../client/local.config.php
+cp client.config.php ../client/local._before_test.php

@@ -35,9 +35,14 @@ class ActivityService implements HttpResourceService
         $object_service = Services::get('Object');
         $stream_service = Services::get('Stream');
         
-        $stream = $stream_service->getStream($values['stream_id']);
+        $application_id = $values['application_id'];
+        $raw_values['application_id'] = $application_id;
+        unset($values['application_id']);
+        
+        $stream = $stream_service->getStream($values['stream_id'], array('application_id' => $application_id));
         $raw_values['stream_id'] = $stream->getId();
         unset($values['stream_id']);
+        
 
         $raw_values['title'] = $values['title'];
         unset($values['title']);

@@ -1,138 +1,160 @@
 <?php
 
-require_once (dirname(__FILE__) . '/AsResource.class.php');
-require_once (dirname(__FILE__) . '/AsObject.class.php');
-require_once (dirname(__FILE__) . '/AsStream.class.php');
-require_once (dirname(__FILE__) . '/AsSubscription.class.php');
+require_once(dirname(__FILE__) . '/AsResource.class.php');
 
 class AsClient extends AsResource
 {
-    protected $endpoint_url = null;
-    protected $json_client = null;
-    protected $data = array();
+    protected $endpoint_url;
+    protected $client;
 
     function __construct($endpoint_url)
     {
         $this->endpoint_url = $endpoint_url;
-        $this->json_client = Services::get('JsonHttpClient');
-        $this->data = $this->json_client->get($this->endpoint_url);
+        parent::__construct($this->get($this->endpoint_url));
     }
 
-    /**
-     * @return AsStream
-     */
-    public function createStream($name, $auto_subscribe)
+    public function getApplicationById($application_id)
     {
-        $stream_data = $this->json_client->post($this->getLink('streams'), array(
-            'name' => $name,
-            'auto_subscribe' => $auto_subscribe ? '1' : '0'
-        ));
+        $applications_data = $this->get($this->getLink('applications'), array('application_id' => $application_id));
 
-        return new AsStream($this, $stream_data);
-    }
-
-    /**
-     * @return AsStream
-     */
-    public function getStreamById($stream_id)
-    {
-        $streams_data = $this->json_client->get($this->getLink('streams'), array('stream_id' => $stream_id));
-
-        if (count($streams_data) > 0)
+        if (count($applications_data) == 0)
         {
-            return new AsStream($this, $streams_data[0]);
+            throw new Exception('Cannot find application with id: ' . $application_id);
         }
 
-        throw new Exception('Cannot find stream with id ' . $stream_id);
+        return new AsApplication($this, $applications_data[0]);
     }
 
-    /**
-     * @return AsStream
-     */
-    public function deleteStream(AsStream $stream)
+    public function createApplication($application_id, array $values = array())
     {
-        $this->json_client->delete($this->getLink('streams') . '/' . $stream->getId());
-        return $stream;
+        $values['id'] = $application_id;
+        $application_data = $this->post($this->getLink('applications'), $values);
+        return new AsApplication($this, $application_data);
     }
 
-    /**
-     * @return array the data about the object
-     */
-    public function createObject(array $options)
+    public function deleteApplication(AsApplication $application)
     {
-        return new AsObject($this, $this->json_client->post($this->getLink('objects'), $options));
+        $this->delete($application->getLink('delete'));
     }
 
-    /**
-     * @return array the data about the actor
-     */
-    public function getObjectById($object_id)
+    protected function rawRequest($method, $url, array $options, array $values, array $auth)
     {
-        $objects_data = $this->json_client->get($this->getLink('objects'), array('object_id' => $object_id));
+        $options[CURLOPT_URL] = $url;
 
-        if (count($objects_data) > 0)
+        $default_options = array();
+        $default_options[CURLOPT_CUSTOMREQUEST] = $method;
+        $default_options[CURLOPT_RETURNTRANSFER] = 1;
+        $default_options[CURLOPT_FOLLOWLOCATION] = 1;
+        $default_options[CURLOPT_HEADER] = 0;
+        $default_options[CURLOPT_HTTPHEADER] = array("Expect:");
+        $default_options[CURLOPT_FRESH_CONNECT] = 1;
+
+        if (count($auth))
         {
-            return new AsObject($this, $objects_data[0]);
+            $default_options[CURLOPT_HTTPAUTH] = CURLAUTH_DIGEST;
+            $default_options[CURLOPT_USERPWD] = implode(':', $auth);
         }
 
-        throw new Exception('Cannot find object with id ' . $object_id);
-    }
-
-    public function deleteObject(AsObject $object)
-    {
-        $this->json_client->delete($this->getLink('objects') . '/' . $object->getId());
-        return $object;
-    }
-
-    public function createActivity(AsStream $stream, array $values, AsObject $actor = null, AsObject $object = null, AsObject $target = null)
-    {
-        if ($object !== null)
+        if (count($values))
         {
-            $values['object_id'] = $object->getId();
-        }
-
-        if ($actor !== null)
-        {
-            $values['actor_id'] = $actor->getId();
-        }
-        
-        if ($target !== null)
-        {
-            $values['target_id'] = $target->getId();
-        }
-
-        /*
-         * Create a new activity in this stream
-         */
-        return $this->json_client->post($stream->getLink('activities'), $values);
-    }
-
-    public function getFeedForObject(AsObject $object, $offset = 0, $limit = 20)
-    {
-        $activities_data = $this->json_client->get($object->getLink('feed'), array(
-            'offset' => $offset,
-            'limit' => $limit
-        ));
-        return $activities_data;
-    }
-
-    public function subscribeObjectToStream(AsObject $object, AsStream $stream)
-    {
-        $this->json_client->post($stream->getLink('subscribers'), array('object_id' => $object->getId()));
-    }
-
-    public function unsubscribeObjectFromStream(AsObject $object, $stream)
-    {
-        $subscriptions = $this->json_client->get($object->getLink('subscriptions'));
-
-        foreach ($subscriptions as $subscription_data)
-        {
-            $subscription = new AsSubscription($this, $subscription_data);
-            if ($subscription->getStreamId() == $stream->getId() && $subscription->getObjectId() == $object->getId())
+            $encoded_values = array();
+            foreach ($values as $key => $value)
             {
-                $this->json_client->delete($subscription->getLink('unsubscribe'));
+                $encoded_values[] = urlencode($key) . '=' . urlencode($value);
             }
+
+            $url = $options[CURLOPT_URL];
+
+            if (strpos($url, '?') === false)
+            {
+                $url .= '?';
+            }
+            else
+            {
+                $url .= '&';
+            }
+
+            $options[CURLOPT_URL] = $url . implode('&', $encoded_values);
         }
+
+        $ch = curl_init();
+
+        foreach ($default_options as $option => $value)
+        {
+            curl_setopt($ch, $option, $value);
+        }
+
+        foreach ($options as $option => $value)
+        {
+            curl_setopt($ch, $option, $value);
+        }
+
+        $raw_response = curl_exec($ch);
+        $status = curl_getinfo($ch);
+        curl_close($ch);
+
+        if ($status['http_code'] < 200 || $status['http_code'] > 299)
+        {
+            throw new Exception('Requesting ' . $options[CURLOPT_URL] . ' failed with status code ' . $status['http_code'] . ' and response: ' . $raw_response);
+        }
+
+        // echo PHP_EOL;
+        // var_dump($method . ' ' . $options[CURLOPT_URL]);
+        // echo $response;
+        // echo PHP_EOL;
+
+        $response = @json_decode($raw_response, true);
+        if ($response === null && $raw_response !== 'null' && $raw_response !== '')
+        {
+            throw new Exception('Invalid json response: ' . $raw_response);
+        }
+
+        return $response;
     }
 
+    public function get($url, array $values = array(), $auth = array())
+    {
+        return $this->rawRequest('GET', $url, array(), $values, $auth);
+    }
+
+    public function post($url, array $values = array(), $auth = array())
+    {
+        $encoded_values = array();
+        foreach ($values as $key => $value)
+        {
+            $encoded_values[] = urlencode($key) . '=' . urlencode($value);
+        }
+
+        return $this->rawRequest('POST', $url, array(
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => implode('&', $encoded_values)
+        ), array(), $auth);
+    }
+
+    // public function patch($url, array $values = array(), $auth = array())
+    // {
+    // return $this->rawRequest('PATCH', $url, array(), $values, $auth);
+    // }
+    //
+    // public function put($url, array $values = array(), $auth = array())
+    // {
+    // return $this->rawRequest('PUT', $url, array(), $values, $auth);
+    // }
+
+    public function delete($url, array $values = array(), $auth = array())
+    {
+        return $this->rawRequest('DELETE', $url, array(), $values, $auth);
+    }
+
+    public static function autoload($class_name)
+    {
+        $file = dirname(__FILE__) . '/' . $class_name . '.class.php';
+        echo "$file";
+        if (file_exists($file))
+        {
+            require_once($file);
+        }
+    }
 }
+
+spl_autoload_register(array('AsClient', 'autoload'));

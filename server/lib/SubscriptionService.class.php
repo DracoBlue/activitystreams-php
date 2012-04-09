@@ -19,11 +19,11 @@ class SubscriptionService implements HttpResourceService
             'links' => array(
                 array(
                     'rel' => 'subscribers',
-                    'href' => Config::get('endpoint_base_url') . 'subscription?&stream_id=' . urlencode($subscription['stream_id']) . '&object_id=' . urlencode($subscription['object_id'])
+                    'href' => Config::get('endpoint_base_url') . 'subscription?stream_id=' . urlencode($subscription['stream_id']) . '&object_id=' . urlencode($subscription['object_id']) . '&application_id=' . urlencode($subscription['application_id'])
                 ),
                 array(
                     'rel' => 'unsubscribe',
-                    'href' => Config::get('endpoint_base_url') . 'subscription/' . urlencode($subscription['stream_id']) . '?object_id=' . urlencode($subscription['object_id'])
+                    'href' => Config::get('endpoint_base_url') . 'subscription/' . urlencode($subscription['stream_id']) . '?object_id=' . urlencode($subscription['object_id']) . '&application_id=' . urlencode($subscription['application_id'])
                 )
             )
         ));
@@ -36,23 +36,35 @@ class SubscriptionService implements HttpResourceService
             throw new Exception('Cannot retrieve the subscribers of a stream, without a given object_id!');
         }
 
+        if (!isset($values['application_id']))
+        {
+            throw new Exception('Cannot retrieve the subscribers of a stream, without a given application_id!');
+        }
+
         $db_service = Services::get('Database');
         $stream_service = Services::get('Stream');
 
         $object_id = $values['object_id'];
+        $application_id = $values['application_id'];
 
         $rows = $db_service->getTableRows('streams', '
             (
                 auto_subscribe = 1
-                AND id NOT IN (SELECT stream_id FROM unsubscriptions WHERE object_id = ?)
+                AND application_id = ?
+                AND id NOT IN (SELECT stream_id FROM unsubscriptions WHERE object_id = ? AND application_id = ?)
             )
             OR
             (
-                id IN (SELECT stream_id FROM subscriptions WHERE object_id = ?)
+                application_id = ?
+                AND id IN (SELECT stream_id FROM subscriptions WHERE object_id = ? AND application_id = ?)
             )
         ', array(
+            $application_id,
             $object_id,
-            $object_id
+            $application_id,
+            $application_id,
+            $object_id,
+            $application_id
         ));
 
         $subscriptions = array();
@@ -61,6 +73,7 @@ class SubscriptionService implements HttpResourceService
         {
             $subscriptions[] = array(
                 'object_id' => $object_id,
+                'application_id' => $application_id,
                 'stream_id' => $row['id']
             );
         }
@@ -75,12 +88,19 @@ class SubscriptionService implements HttpResourceService
             throw new Exception('Cannot remove subscription, without a given object_id!');
         }
 
+        if (!isset($values['application_id']))
+        {
+            throw new Exception('Cannot remove subscription, without a given application_id!');
+        }
+
+        $application_id = $values['application_id'];
+        
         $db_service = Services::get('Database');
         $stream_service = Services::get('Stream');
         $object_service = Services::get('Object');
 
-        $stream = $stream_service->getStream($stream_id);
-        $object = $object_service->getObject($values['object_id']);
+        $stream = $stream_service->getStream($stream_id, array('application_id' => $application_id));
+        $object = $object_service->getObject($values['object_id'], array('application_id' => $application_id));
 
         $db_service->deleteTableRows('subscriptions', 'object_id = ? AND stream_id = ?', array(
             $object->getId(),
@@ -92,6 +112,7 @@ class SubscriptionService implements HttpResourceService
             $db_service->createTableRow('unsubscriptions', array(
                 'object_id' => $object->getId(),
                 'stream_id' => $stream->getId(),
+                'application_id' => $application_id
             ));
         }
     }
@@ -107,13 +128,20 @@ class SubscriptionService implements HttpResourceService
         {
             throw new Exception('Cannot add a new subscription, without a given stream_id!');
         }
+        
+        if (!isset($values['application_id']))
+        {
+            throw new Exception('Cannot add a new subscription, without a given application_id!');
+        }
+        
+        $application_id = $values['application_id'];
 
         $db_service = Services::get('Database');
         $stream_service = Services::get('Stream');
         $object_service = Services::get('Object');
 
-        $stream = $stream_service->getStream($values['stream_id']);
-        $object = $object_service->getObject($values['object_id']);
+        $stream = $stream_service->getStream($values['stream_id'], array('application_id' => $application_id));
+        $object = $object_service->getObject($values['object_id'], array('application_id' => $application_id));
 
         $db_service->deleteTableRows('unsubscriptions', 'object_id = ? AND stream_id = ?', array(
             $object->getId(),
@@ -124,6 +152,7 @@ class SubscriptionService implements HttpResourceService
         {
             $db_service->createTableRow('subscriptions', array(
                 'object_id' => $object->getId(),
+                'application_id' => $application_id,
                 'stream_id' => $stream->getId(),
             ));
         }

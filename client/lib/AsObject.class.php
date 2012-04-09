@@ -2,32 +2,32 @@
 
 class AsObject extends AsResource
 {
-    protected $data = array();
-    protected $client = null;
+    protected $application = null;
     
-    function __construct(AsClient $client, array $data)
+    function __construct(AsApplication $application, array $data)
     {
-        $this->client = $client;
-        $this->data = $data;
-    }    
+        parent::__construct($data);
+        $this->application = $application;
+    }
     
     public function getId()
     {
         return $this->data['id'];
     }
     
-    public function getValues()
+    public function getFeed($offset = 0, $limit = 20)
     {
-        return $this->data;
+        return $this->application->getFeedForObject($this, $offset, $limit);
     }
     
-    public function getUrl()
+    public function subscribeToStream(AsStream $stream)
     {
-        return $this->data['url'];
+        return $this->application->subscribeObjectToStream($this, $stream);
     }
     
-    public function delete()
+    public function unsubscribeFromStream(AsStream $stream)
     {
-        $this->client->deleteObject($this);
+        return $this->application->unsubscribeObjectFromStream($this, $stream);
     }
 }
+

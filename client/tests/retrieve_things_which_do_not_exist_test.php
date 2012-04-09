@@ -1,10 +1,13 @@
 <?php
 
-$client = new AsClient(Config::get('endpoint_base_url'));
+/*
+ * Create a new app for this test!
+ */
+$application = $client->createApplication('my_app', array('name' => 'Test Application: ' . basename(__FILE__)));
 
 try
 {
-    $client->getObjectById('doesnotexist');
+    $application->getLink('doesnotexist');
     assert(false);
 }
 catch (Exception $exception)
@@ -14,10 +17,21 @@ catch (Exception $exception)
 
 try
 {
-    $client->getStreamById('doesnotexist');
+    $application->getStreamById('doesnotexist');
     assert(false);
 }
 catch (Exception $exception)
 {
 
 }
+try
+{
+    $application->getObjectById('doesnotexist');
+    assert(false);
+}
+catch (Exception $exception)
+{
+
+}
+
+$client->deleteApplication($application);

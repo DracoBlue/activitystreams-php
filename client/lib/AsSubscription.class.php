@@ -2,13 +2,12 @@
 
 class AsSubscription extends AsResource
 {
-    protected $data = array();
-    protected $client = null;
+    protected $application = null;
     
-    function __construct(AsClient $client, array $data)
+    function __construct(AsApplication $application, array $data)
     {
-        $this->client = $client;
-        $this->data = $data;
+        parent::__construct($data);
+        $this->application = $application;
     }    
     
     public function getObjectId()

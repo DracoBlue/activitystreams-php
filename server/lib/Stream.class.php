@@ -13,6 +13,11 @@ class Stream
         return $this->data['id'];
     }
     
+    public function getApplicationId()
+    {
+        return $this->data['application_id'];
+    }
+    
     public function getName()
     {
         return $this->data['name'];

@@ -5,7 +5,13 @@
  */
 Services::get('JsonHttpClient')->delete(Config::get('endpoint_base_url') . 'api/default');
 
-$client = new AsClient(Config::get('endpoint_base_url'));
+$endpoint_url = Config::get('endpoint_base_url');
+
+$admin = new AsAdmin($endpoint_url);
+$test_app = $admin->createNewApplication('TestApplication in ' . basename(__FILE__));
+
+$client = new AsClient($endpoint_url, $test_app);
+
 $actor1 = $client->createObject(array('displayName' => 'User1', 'foo_attribute' => '!23', 'objectType' => 'person'));
 
 $public_stream = $client->createStream('Public TestStream', true);
@@ -86,3 +92,5 @@ $private_stream->delete();
 $client->deleteObject($actor1);
 $blog->delete();
 $client->deleteObject($second_blog);
+
+$admin->deleteApplication($test_app);

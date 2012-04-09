@@ -18,12 +18,16 @@ class StreamService implements HttpResourceService
             'name' => $stream->getName(),
             'links' => array(
                 array(
+                    'rel' => 'delete',
+                    'href' => Config::get('endpoint_base_url') . 'stream/' . urlencode($stream->getId()) . '?application_id=' . urlencode($stream->getApplicationId())
+                ),
+                array(
                     'rel' => 'activities',
-                    'href' => Config::get('endpoint_base_url') . 'activity?stream_id=' . urlencode($stream->getId())
+                    'href' => Config::get('endpoint_base_url') . 'activity?application_id=' . urlencode($stream->getApplicationId()) . '&stream_id=' . urlencode($stream->getId())
                 ),
                 array(
                     'rel' => 'subscribers',
-                    'href' => Config::get('endpoint_base_url') . 'subscription?stream_id=' . urlencode($stream->getId())
+                    'href' => Config::get('endpoint_base_url') . 'subscription?application_id=' . urlencode($stream->getApplicationId()) . '&stream_id=' . urlencode($stream->getId())
                 )
             )
         ));
@@ -36,15 +40,21 @@ class StreamService implements HttpResourceService
     {
         $db_service = Services::get('Database');
 
+        if (!isset($values['application_id']))
+        {
+            throw new Exception('Cannot search for streams if no application_id is given!');    
+        }
+        
         if (!isset($values['stream_id']))
         {
             throw new Exception('Cannot search for streams if no stream_id is given!');    
         }
         
         $stream_id = $values['stream_id'];
+        $application_id = $values['application_id'];
 
         $streams = array();
-        foreach ($db_service->getTableRows('streams', 'id = ?', array($stream_id)) as $row)
+        foreach ($db_service->getTableRows('streams', 'id = ? and application_id = ?', array($stream_id, $application_id)) as $row)
         {
             $streams[] = new Stream($row);
         }
@@ -57,22 +67,27 @@ class StreamService implements HttpResourceService
      */
     public function getStream($stream_id, array $values = array())
     {
+        if (!isset($values['application_id']))
+        {
+            throw new Exception('Cannot search for streams if no application_id is given!');    
+        }
+        
+        $application_id = $values['application_id'];
         $db_service = Services::get('Database');
-        $row = $db_service->getTableRow('streams', 'id = ?', array($stream_id));
+        $row = $db_service->getTableRow('streams', 'id = ? AND application_id = ?', array($stream_id, $application_id));
         return new Stream($row);
     }
 
     public function deleteStream($stream_id, array $values = array())
     {
         $db_service = Services::get('Database');
+        $stream = $this->getStream($stream_id, $values);
+        $application_id = $stream->getApplicationId();
 
-        $stream = $this->getStream($stream_id);
-
-        $db_service->deleteTableRows('subscriptions', 'stream_id = ?', array($stream_id));
-        $db_service->deleteTableRows('unsubscriptions', 'stream_id = ?', array($stream_id));
-        $db_service->deleteTableRows('activities', 'stream_id = ?', array($stream_id));
-
-        $db_service->deleteTableRow('streams', 'id = ?', array($stream_id));
+        $db_service->deleteTableRows('subscriptions', 'stream_id = ? AND application_id = ?', array($stream_id, $application_id));
+        $db_service->deleteTableRows('unsubscriptions', 'stream_id = ? AND application_id = ?', array($stream_id, $application_id));
+        $db_service->deleteTableRows('activities', 'stream_id = ? AND application_id = ?', array($stream_id, $application_id));
+        $db_service->deleteTableRow('streams', 'id = ? AND application_id = ?', array($stream_id, $application_id));
     }
 
     /**
@@ -83,7 +98,15 @@ class StreamService implements HttpResourceService
         $db_service = Services::get('Database');
 
         $raw_values = array();
-        $raw_values['name'] = $values['name'];
+        
+        $application_id = $values['application_id'];
+        $raw_values['application_id'] = $application_id;
+        $raw_values['id'] = $values['id'];
+        
+        if (isset($values['name']))
+        {
+            $raw_values['name'] = $values['name'];
+        }
 
         if (!isset($values['auto_subscribe']))
         {
@@ -94,7 +117,7 @@ class StreamService implements HttpResourceService
 
         $stream_id = $db_service->createTableRow('streams', $raw_values);
 
-        return $this->getStream($stream_id);
+        return $this->getStream($stream_id, array('application_id' => $application_id));
     }
 
 }

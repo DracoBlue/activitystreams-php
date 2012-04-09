@@ -132,9 +132,10 @@ class DatabaseService
      */
     public function createTableRow($table_name, array $data)
     {
-        $id = $this->generateUuid();
-        
-        $data['id'] = $id;
+        if (!isset($data['id']))
+        {
+            $data['id'] = $this->generateUuid();
+        }
         
         $pdo = $this->getPdo();
         $values = array();
@@ -156,7 +157,7 @@ class DatabaseService
             throw new Exception('Cannot create row in table ' . $table_name . ' with sql: ' . $sql);
         }
         
-        return $id;
+        return $data['id'];
     }
 
     public function queryRows($query, array $values = array())

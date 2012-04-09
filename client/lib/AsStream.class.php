@@ -2,27 +2,22 @@
 
 class AsStream extends AsResource
 {
-    protected $data = array();
-    protected $client = null;
+    protected $application = null;
     
-    function __construct(AsClient $client, array $data)
+    function __construct(AsApplication $application, array $data)
     {
-        $this->client = $client;
-        $this->data = $data;
-    }    
+        parent::__construct($data);
+        $this->application = $application;
+    }
+    
+    public function createActivity(array $values, AsObject $actor = null, AsObject $object = null, AsObject $target = null)
+    {
+        return $this->application->createActivityInStream($this, $values, $actor, $object, $target);
+    }
     
     public function getId()
     {
         return $this->data['id'];
     }
-    
-    public function getName()
-    {
-        return $this->data['name'];
-    }
-    
-    public function delete()
-    {
-        $this->client->deleteStream($this);
-    }
 }
+
