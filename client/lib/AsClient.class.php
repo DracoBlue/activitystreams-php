@@ -137,10 +137,11 @@ class AsClient extends AsResource
         ), array(), $auth);
     }
 
-    // public function patch($url, array $values = array(), $auth = array())
-    // {
-    // return $this->rawRequest('PATCH', $url, array(), $values, $auth);
-    // }
+    public function patch($url, array $values = array(), $auth = array())
+    {
+        return $this->rawRequest('PATCH', $url, array(), $values, $auth);
+    }
+    
     //
     // public function put($url, array $values = array(), $auth = array())
     // {

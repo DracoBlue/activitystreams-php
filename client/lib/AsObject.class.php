@@ -15,6 +15,36 @@ class AsObject extends AsResource
         return $this->data['id'];
     }
     
+    public function getUrl()
+    {
+        if (!isset($this->data['url']))
+        {
+            return null;
+        }
+        
+        return $this->data['url'];
+    }
+    
+    public function getObjectType()
+    {
+        if (!isset($this->data['objectType']))
+        {
+            return null;
+        }
+        
+        return $this->data['objectType'];
+    }
+    
+    public function getValues()
+    {
+        $data = $this->data;
+        unset($data['objectType']);
+        unset($data['url']);
+        unset($data['links']);
+        unset($data['id']);
+        return $data;
+    }
+    
     public function getFeed($offset = 0, $limit = 20)
     {
         return $this->application->getFeedForObject($this, $offset, $limit);

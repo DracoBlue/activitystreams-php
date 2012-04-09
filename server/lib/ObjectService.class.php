@@ -26,6 +26,10 @@ class ObjectService extends HttpResourceService
             array(
                 'rel' => 'delete',
                 'href' => Config::get('endpoint_base_url') . 'object/' . urlencode($object->getId())
+            ),
+            array(
+                'rel' => 'update',
+                'href' => Config::get('endpoint_base_url') . 'object/' . urlencode($object->getId())
             )
         );
 
@@ -67,6 +71,76 @@ class ObjectService extends HttpResourceService
         return new AsObject($row);
     }
 
+    /**
+     * @return AsObject
+     */
+    public function patchObject($object_id, array $values = array())
+    {
+        $application_id = $this->getAuthenticatedApplicationId();
+        $db_service = Services::get('Database');
+        $object = $this->getObject($object_id);
+        
+        if (empty($values))
+        {
+            /*
+             * Nothing to do ...
+             */
+            return $object;
+        }
+        
+        $raw_values = array();
+
+        if (isset($values['url']))
+        {
+            $raw_values['url'] = $values['url'];
+            unset($values['url']);
+        }
+
+        if (isset($values['objectType']))
+        {
+            $raw_values['object_type'] = $values['objectType'];
+            unset($values['objectType']);
+        }
+        
+        /*
+         * Everything else can be set by using the values json serialized blob
+         */
+        if (!empty($values))
+        {
+            $original_values = $object->getValues();
+            /*
+             * Get rid of the stuff, which we store right into the object!
+             */
+            unset($original_values['objectType']);
+            unset($original_values['id']);
+            unset($original_values['url']);
+            foreach ($original_values as $key => $value)
+            {
+                if (!array_key_exists($key, $values))
+                {
+                    $values[$key] = $value;
+                }
+            }
+            $raw_values['values'] = json_encode($values);
+        }
+        
+        $update_query = array();
+        $where_parameters = array();
+        
+        foreach ($raw_values as $key => $value)
+        {
+            $update_query[] = '`' . $key . '` = ?';
+            $where_parameters[] = $value;
+        }
+        
+        $where_parameters[] = $object_id;
+        $where_parameters[] = $application_id;
+        
+        $db_service->updateTableRows('objects', implode(', ', $update_query), 'id = ? AND application_id = ?', $where_parameters);
+        
+        return $this->getObject($object_id);
+    }
+
     public function deleteObject($object_id, array $values = array())
     {
         $application_id = $this->getAuthenticatedApplicationId();
@@ -100,9 +174,9 @@ class ObjectService extends HttpResourceService
             unset($values['url']);
         }
 
-        if (isset($values['object_type']))
+        if (isset($values['objectType']))
         {
-            $raw_values['object_type'] = $values['object_type'];
+            $raw_values['object_type'] = $values['objectType'];
             unset($values['object_type']);
         }
         

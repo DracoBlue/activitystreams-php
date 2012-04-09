@@ -68,6 +68,12 @@ class AsApplication extends AsResource
         return new AsObject($this, $object);
     }
     
+    public function updateObject(AsObject $object, array $values = array())
+    {
+        $object = $this->client->patch($object->getLink('update'), $values, $this->getAuth());
+        return new AsObject($this, $object);
+    }
+    
     public function deleteObject(AsObject $object)
     {
         $this->client->delete($object->getLink('delete'), array(), $this->getAuth());

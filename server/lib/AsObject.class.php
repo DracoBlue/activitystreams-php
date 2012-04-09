@@ -17,7 +17,7 @@ class AsObject
         
         if ($this->getObjectType())
         {
-            $values['objctType'] = $this->getObjectType();
+            $values['objectType'] = $this->getObjectType();
         }
         
         if ($this->getUrl())
@@ -45,11 +45,11 @@ class AsObject
     
     public function getObjectType()
     {
-        if (!isset($this->data['objectType']))
+        if (!isset($this->data['object_type']))
         {
             return null;
         }
         
-        return $this->data['objectType'];
+        return $this->data['object_type'];
     }
 }
