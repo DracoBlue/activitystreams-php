@@ -65,7 +65,6 @@ class AsClient extends AsResource
             
 
             $url = $options[CURLOPT_URL];
-            print_r(array($url, $values));
 
             if (strpos($url, '?') === false)
             {

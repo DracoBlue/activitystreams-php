@@ -42,9 +42,9 @@ the credentials.
 To create a new stream, choose if you want to make it public or private. A public stream will automatically be subscribed by all actors.
 
     // every actor subscribes this stream!
-    $public_stream = $application->createStream("public_stream", true);
+    $public_stream = $application->createStream("public_stream");
     // actors have to subscribe to this stream manually!
-    $private_stream = $application->createStream("private_stream", false);
+    $private_stream = $application->createStream("private_stream", array("auto_subscribe" => 0));
 
 You can fetch a stream by id, if you created the stream earlier:
 
