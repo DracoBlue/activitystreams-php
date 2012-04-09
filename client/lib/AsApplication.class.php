@@ -82,6 +82,19 @@ class AsApplication extends AsResource
     public function createActivityInStream(AsStream $stream, array $values, AsObject $actor = null, AsObject $object = null, AsObject $target = null)
     {
         $values['stream_id'] = $stream->getId();
+        if ($actor)
+        {
+            $values['actor_id'] = $actor->getId();
+        }
+        if ($object)
+        {
+            $values['object_id'] = $object->getId();
+        }
+        if ($target)
+        {
+            $values['target_id'] = $target->getId();
+        }
+        $values['stream_id'] = $stream->getId();
         $this->client->post($stream->getLink('activities'), $values, $this->getAuth());
     }
     
