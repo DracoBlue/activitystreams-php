@@ -11,13 +11,22 @@ catch (Exception $exception)
     
 }
 
+$client->deleteApplication($application);
+
 try
 {
     $client->get(dirname($client->getEndpointUrl()) . '/DOES_NOT_EXIST.html');
 }
 catch (Exception $exception)
 {
-    assert(strpos($exception->getMessage(), 'failed with status code 404') > -1);
+    assert(strpos($exception->getMessage(), 'failed with status code') > -1);
 }
 
-$client->deleteApplication($application);
+try
+{
+    $client->get('http://google.com/');
+}
+catch (Exception $exception)
+{
+    assert(strpos($exception->getMessage(), 'Invalid json response') > -1);
+}
