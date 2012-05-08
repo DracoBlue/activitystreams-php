@@ -74,6 +74,20 @@ class AsApplication extends AsResource
         return new AsObject($this, $object);
     }
     
+    public function recreateObject($id, array $values = array())
+    {
+        try
+        {
+            $object = $this->getObjectById($id);
+            $object = $this->client->put($object->getLink('update'), $values, $this->getAuth());
+            return new AsObject($this, $object);
+        }
+        catch (Exception $exception)
+        {
+            return $this->createObject($id, $values);   
+        }
+    }
+    
     public function deleteObject(AsObject $object)
     {
         $this->client->delete($object->getLink('delete'), array(), $this->getAuth());

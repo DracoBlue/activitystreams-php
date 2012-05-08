@@ -90,13 +90,13 @@ class ObjectService extends HttpResourceService
         
         $raw_values = array();
 
-        if (isset($values['url']))
+        if (array_key_exists('url', $values))
         {
             $raw_values['url'] = $values['url'];
             unset($values['url']);
         }
 
-        if (isset($values['objectType']))
+        if (array_key_exists('objectType', $values))
         {
             $raw_values['object_type'] = $values['objectType'];
             unset($values['objectType']);
@@ -105,7 +105,7 @@ class ObjectService extends HttpResourceService
         /*
          * Everything else can be set by using the values json serialized blob
          */
-        if (!empty($values))
+        if (count($values) > 0)
         {
             $original_values = $object->getValues();
             /*
@@ -154,6 +154,34 @@ class ObjectService extends HttpResourceService
         $db_service->deleteTableRow('objects', 'id = ? AND application_id = ?', array($object_id, $application_id));
     }
 
+    /**
+     * @return AsObject
+     */
+    public function putObject($object_id, array $values)
+    {
+        $object = $this->getObject($object_id);
+        
+        $application_id = $this->getAuthenticatedApplicationId();
+        $db_service = Services::get('Database');
+        
+        if (!array_key_exists('url', $values))
+        {
+            $values['url'] = null;
+        }
+        
+        if (!array_key_exists('objectType', $values))
+        {
+            $values['objectType'] = null;
+        }
+        
+        /*
+         * It does exist, so reset all values and patch it afterwards
+         */
+        $db_service->updateTableRows('objects', '`values` = NULL', 'id = ? AND application_id = ?', array($object->getId(), $application_id));
+        
+        return $this->patchObject($object->getId(), $values);
+    }
+    
     /**
      * @return AsObject
      */

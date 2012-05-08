@@ -142,11 +142,20 @@ class AsClient extends AsResource
         return $this->rawRequest('PATCH', $url, array(), $values, $auth);
     }
     
-    //
-    // public function put($url, array $values = array(), $auth = array())
-    // {
-    // return $this->rawRequest('PUT', $url, array(), $values, $auth);
-    // }
+    
+    public function put($url, array $values = array(), $auth = array())
+    {
+        $encoded_values = array();
+        foreach ($values as $key => $value)
+        {
+            $encoded_values[] = urlencode($key) . '=' . urlencode($value);
+        }
+
+        return $this->rawRequest('PUT', $url, array(
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => implode('&', $encoded_values)
+        ), array(), $auth);
+    }
 
     public function delete($url, array $values = array(), $auth = array())
     {
