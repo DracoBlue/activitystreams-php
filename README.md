@@ -70,6 +70,16 @@ Finally we can fetch the most recent posts of an actor (will be 2!).
     $activities = $client->getFeedForObject($actor1, 0, 20);
     assert(count($activities) == 2);
 
+## Updating events with recreateObject
+
+If you just want to push the latest object into a stream and don't want to check if the object already exists or not, you
+can use the `AsApplication#recreateObject`.
+
+    // will create or update the guest-object, so that it has only set the foo=bar property
+    $guest = $application->recreateObject('guest', array('foo' => 'bar'));
+    // post an activity with that object
+    $media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'), $guest);
+
 ## TODO
 
 * Implement the paper "Feeding Frenzy: Selectively Materializing Users’ Event Feeds" from <http://research.yahoo.com/pub/3203>
