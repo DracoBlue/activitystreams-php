@@ -205,7 +205,7 @@ class ObjectService extends HttpResourceService
         if (isset($values['objectType']))
         {
             $raw_values['object_type'] = $values['objectType'];
-            unset($values['object_type']);
+            unset($values['objectType']);
         }
         
         /*
