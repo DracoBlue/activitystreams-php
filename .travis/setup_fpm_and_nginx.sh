@@ -1,4 +1,5 @@
 #!/bin/bash
+apt-get update
 apt-get install nginx
 apt-get install php5-fpm php5-mysql
 cd `dirname $0`
