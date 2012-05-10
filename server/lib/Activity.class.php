@@ -40,6 +40,11 @@ class Activity
         return $this->data['target_id'];
     }
     
+    public function getVerb()
+    {
+        return $this->data['verb'];
+    }
+    
     public function getValues()
     {
         $object_service = Services::get('Object');
@@ -48,6 +53,7 @@ class Activity
         $values['published'] = $this->getPublished();
         $values['title'] = $this->getTitle();
         $values['id'] = $this->getId();
+        $values['verb'] = $this->getVerb();
         
         if ($this->getActorId())
         {
