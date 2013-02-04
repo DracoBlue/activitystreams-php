@@ -1,7 +1,7 @@
 # activitystreams-php
 
-* Version: 1.0.0
-* Date: 2013/01/13
+* Version: 1.1.0
+* Date: 2013/02/04
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/activitystreams-php.png?branch=master)](http://travis-ci.org/DracoBlue/activitystreams-php), 100% Code Coverage
 
 This is an activity stream server and client. It's intended to implement a RESTful service to create, publish, (un)subscribe activity streams (according to the "JSON Activity Streams 1.0"[1]).
@@ -104,13 +104,9 @@ can use the `AsApplication#recreateStream`.
 * Implement the paper "Feeding Frenzy: Selectively Materializing Users’ Event Feeds" from <http://research.yahoo.com/pub/3203>
 * Add database structure and way to create the database from scratch
 
-## Contributors
-
-* https://github.com/atrandafir
-
 ## Changelog
 
-* 1.1-dev
+* 1.1.0 (2013/02/04)
   - added possibility to set the activity id when creating the activity
   - added new methods on `AsActivity` (getTitle, getVerb, getId, getPublished, getUrl)
   - added `AsActivity#getActor()` and `AsActivity#getActorId()`
@@ -124,6 +120,10 @@ can use the `AsApplication#recreateStream`.
   - added `update`-Link and auto_subscribe:bool property to stream resources
 * 1.0.0 (2013/01/13)
   - Initial release
+
+## Contributors
+
+* https://github.com/atrandafir
 
 ## License
 
