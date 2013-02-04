@@ -102,13 +102,16 @@ can use the `AsApplication#recreateStream`.
 ## TODO
 
 * Implement the paper "Feeding Frenzy: Selectively Materializing Users’ Event Feeds" from <http://research.yahoo.com/pub/3203>
-* Clean up the code
-* Finish the tests
 * Add database structure and way to create the database from scratch
+
+## Contributors
+
+* https://github.com/atrandafir
 
 ## Changelog
 
 * 1.1-dev
+  - added possibility to set the activity id when creating the activity
   - added new methods on `AsActivity` (getTitle, getVerb, getId, getPublished, getUrl)
   - added `AsActivity#getActor()` and `AsActivity#getActorId()`
   - added `AsActivity#getTarget()` and `AsActivity#getTargetId()`
