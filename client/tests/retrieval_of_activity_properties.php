@@ -60,7 +60,6 @@ $activites = $guest->getFeed();
 assert(count($activites) == 1);
 
 $activity = $activites[0];
-print_r($activity);
 
 assert($activity->getId() != null);
 assert($activity->getPublished() instanceof DateTime);
