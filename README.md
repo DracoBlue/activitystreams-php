@@ -70,7 +70,18 @@ Finally we can fetch the most recent posts of an actor (will be 2!).
     $activities = $client->getFeedForObject($actor1, 0, 20);
     assert(count($activities) == 2);
 
-## Updating events with recreateObject
+## Ondemand object and stream creation
+
+In case of e.g. user activity streams, you may want to create those streams on demand. To avoid checking if the stream
+exists, before creating it on demand, you can use the `AsApplication#recreateStream` and the `AsApplication#recreateObject` method.
+
+Best practice for creation of objects in those streams:
+
+    $actor1 = $application->recreateObject('user1');
+    $user_stream = $application->recreateStream('user' . $user_id);
+    $user_stream->createActivity(array('title' => 'I posted a new link in my personal stream', 'verb' => 'post'), $actor1);
+
+### Updating events with recreateObject
 
 If you just want to push the latest object into a stream and don't want to check if the object already exists or not, you
 can use the `AsApplication#recreateObject`.
@@ -80,7 +91,7 @@ can use the `AsApplication#recreateObject`.
     // post an activity with that object
     $media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'), $guest);
 
-## Updating streams with recreateStream
+### Updating streams with recreateStream
 
 If you just want to push the latest version of a stream and don't want to check if the stream already exists or not, you
 can use the `AsApplication#recreateStream`.
