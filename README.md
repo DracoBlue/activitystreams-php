@@ -78,7 +78,7 @@ exists, before creating it on demand, you can use the `AsApplication#recreateStr
 Best practice for creation of objects in those streams:
 
     $actor1 = $application->recreateObject('user1');
-    $user_stream = $application->recreateStream('user' . $user_id);
+    $user_stream = $application->recreateStream('user1');
     $user_stream->createActivity(array('title' => 'I posted a new link in my personal stream', 'verb' => 'post'), $actor1);
 
 ### Updating events with recreateObject
