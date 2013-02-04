@@ -59,6 +59,12 @@ class ActivityService extends HttpResourceService
         $raw_values['verb'] = $values['verb'];
         unset($values['verb']);
         
+        if (isset($values['id']))
+        {
+            $raw_values['id'] = $values['id'];
+            unset($values['id']);
+        }
+        
         if (isset($values['object_id']))
         {
             $raw_values['object_id'] = $object_service->getObject($values['object_id'])->getId();
