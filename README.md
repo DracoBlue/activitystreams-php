@@ -109,6 +109,9 @@ can use the `AsApplication#recreateStream`.
 ## Changelog
 
 * 1.1-dev
+  - added `AsActivity#getActor()` and `AsActivity#getActorId()`
+  - added `AsActivity#getTarget()` and `AsActivity#getTargetId()`
+  - added `AsActivity#getObject()` and `AsActivity#getObjectId()`
   - added `AsApplication#deleteActivity`
   - added `AsApplication#recreateStream`
   - added `AsStream#getName`
