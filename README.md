@@ -80,6 +80,14 @@ can use the `AsApplication#recreateObject`.
     // post an activity with that object
     $media_comments_stream->createActivity(array('title' => 'I posted a link!', 'verb' => 'post'), $guest);
 
+## Updating streams with recreateStream
+
+If you just want to push the latest version of a stream and don't want to check if the stream already exists or not, you
+can use the `AsApplication#recreateStream`.
+
+    // will create or update the public_stream-stream, so that it has only set the name='The Public Stream' property
+    $public_stream = $application->recreateStream('public_stream', array('name' => 'The Public Stream'));
+
 ## TODO
 
 * Implement the paper "Feeding Frenzy: Selectively Materializing Users’ Event Feeds" from <http://research.yahoo.com/pub/3203>
@@ -90,7 +98,11 @@ can use the `AsApplication#recreateObject`.
 ## Changelog
 
 * 1.1-dev
+  - added `AsApplication#recreateStream`
+  - added `AsStream#getName`
+  - added `AsStream#isAutoSubscribe`
   - remove all activites as soon as an object was removed
+  - added `update`-Link and auto_subscribe:bool property to stream resources
 * 1.0.0 (2013/01/13)
   - Initial release
 

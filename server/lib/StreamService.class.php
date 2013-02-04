@@ -16,7 +16,12 @@ class StreamService extends HttpResourceService
         return json_encode(array(
             'id' => $stream->getId(),
             'name' => $stream->getName(),
+            'auto_subscribe' => $stream->isAutoSubscribe(),
             'links' => array(
+                array(
+                    'rel' => 'update',
+                    'href' => Config::get('endpoint_base_url') . 'stream/' . urlencode($stream->getId())
+                ),
                 array(
                     'rel' => 'delete',
                     'href' => Config::get('endpoint_base_url') . 'stream/' . urlencode($stream->getId())
@@ -109,6 +114,39 @@ class StreamService extends HttpResourceService
 
         $stream_id = $db_service->createTableRow('streams', $raw_values);
 
+        return $this->getStream($stream_id, array('application_id' => $application_id));
+    }
+    
+    /**
+     * @return Stream
+     */
+    public function putStream($stream_id, array $values)
+    {
+        $stream = $this->getStream($stream_id);
+        $db_service = Services::get('Database');
+
+        $application_id = $this->getAuthenticatedApplicationId();
+        
+        if (!isset($values['name']))
+        {
+            $values['name'] = '';
+        }
+
+        if (!isset($values['auto_subscribe']))
+        {
+            $values['auto_subscribe'] = '1';
+        }
+
+        $values['auto_subscribe'] = $values['auto_subscribe'] ? 1 : 0;
+        
+        $parameters = array();
+        $parameters[] = $values['auto_subscribe'];
+        $parameters[] = $values['name'];
+        $parameters[] = $stream->getId();
+        $parameters[] = $application_id;
+
+        $db_service->updateTableRows('streams', '`auto_subscribe` = ?, `name` = ?', 'id = ? AND application_id = ?', $parameters);
+        
         return $this->getStream($stream_id, array('application_id' => $application_id));
     }
 

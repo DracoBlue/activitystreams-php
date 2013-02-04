@@ -19,5 +19,15 @@ class AsStream extends AsResource
     {
         return $this->data['id'];
     }
+    
+    public function getName()
+    {
+        return $this->data['name'];
+    }
+    
+    public function isAutoSubscribe()
+    {
+        return $this->data['auto_subscribe'];
+    }
 }
 

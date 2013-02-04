@@ -43,6 +43,21 @@ class AsApplication extends AsResource
         $stream = $this->client->post($this->getLink('streams'), $values, $this->getAuth());
         return new AsStream($this, $stream);
     }
+    
+    public function recreateStream($id, array $values = array())
+    {
+        try
+        {
+            $stream = $this->getStreamById($id);
+            $values['id'] = $id;
+            $stream = $this->client->put($stream->getLink('update'), $values, $this->getAuth());
+            return new AsStream($this, $stream);
+        }
+        catch (Exception $exception)
+        {
+            return $this->createStream($id, $values);
+        }
+    }
 
     public function deleteStream(AsStream $stream)
     {
