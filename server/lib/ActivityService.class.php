@@ -13,7 +13,15 @@ class ActivityService extends HttpResourceService
 
     public function convertResourceToJson(Activity $activity)
     {
-        return json_encode($activity->getValues());
+        $values = $activity->getValues();
+        $values['links'] = array(
+            array(
+                'rel' => 'delete',
+                'href' => Config::get('endpoint_base_url') . 'activity/' . urlencode($activity->getId())
+            )
+        );
+
+        return json_encode($values);
     }
 
     /**
@@ -81,6 +89,16 @@ class ActivityService extends HttpResourceService
         $activity_id = $db_service->createTableRow('activities', $raw_values);
         
         return $this->getActivity($activity_id);
+    }
+    
+    public function deleteActivity($activity_id, array $values = array())
+    {
+        $application_id = $this->getAuthenticatedApplicationId();
+        $db_service = Services::get('Database');
+
+        $activity = $this->getActivity($activity_id);
+
+        $db_service->deleteTableRow('activities', 'id = ? AND application_id = ?', array($activity_id, $application_id));
     }
 
 }

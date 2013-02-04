@@ -18,7 +18,14 @@ class FeedService extends HttpResourceService
         foreach ($feed->getActivities() as $activity)
         {
             $activity_data = $activity->getValues();
-
+            
+            $activity_data['links'] = array(
+                array(
+                    'rel' => 'delete',
+                    'href' => Config::get('endpoint_base_url') . 'activity/' . urlencode($activity->getId())
+                )
+            );
+        
             $converted_activities[] = $activity_data;
         }
 

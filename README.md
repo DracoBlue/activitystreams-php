@@ -109,6 +109,7 @@ can use the `AsApplication#recreateStream`.
 ## Changelog
 
 * 1.1-dev
+  - added `AsApplication#deleteActivity`
   - added `AsApplication#recreateStream`
   - added `AsStream#getName`
   - added `AsStream#isAutoSubscribe`

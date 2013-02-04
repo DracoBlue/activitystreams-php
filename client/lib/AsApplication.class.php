@@ -108,6 +108,11 @@ class AsApplication extends AsResource
         $this->client->delete($object->getLink('delete'), array(), $this->getAuth());
     }
     
+    public function deleteActivity(AsActivity $activity)
+    {
+        $this->client->delete($activity->getLink('delete'), array(), $this->getAuth());
+    }
+    
     public function createActivityInStream(AsStream $stream, array $values, AsObject $actor = null, AsObject $object = null, AsObject $target = null)
     {
         $values['stream_id'] = $stream->getId();
