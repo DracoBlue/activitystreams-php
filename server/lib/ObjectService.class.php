@@ -150,6 +150,7 @@ class ObjectService extends HttpResourceService
 
         $db_service->deleteTableRows('subscriptions', 'object_id = ? AND application_id = ?', array($object_id, $application_id));
         $db_service->deleteTableRows('unsubscriptions', 'object_id = ? AND application_id = ?', array($object_id, $application_id));
+        $db_service->deleteTableRows('activities', 'object_id = ? AND application_id = ?', array($object_id, $application_id));
 
         $db_service->deleteTableRow('objects', 'id = ? AND application_id = ?', array($object_id, $application_id));
     }

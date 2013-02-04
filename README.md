@@ -89,6 +89,8 @@ can use the `AsApplication#recreateObject`.
 
 ## Changelog
 
+* 1.1-dev
+  - remove all activites as soon as an object was removed
 * 1.0.0 (2013/01/13)
   - Initial release
 
