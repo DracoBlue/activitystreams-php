@@ -10,6 +10,42 @@ class AsActivity extends AsResource
         $this->application = $application;
     }
     
+    function getValues()
+    {
+        $values = $this->data;
+        unset($values['actor']);
+        unset($values['target']);
+        unset($values['object']);
+        unset($values['published']);
+        unset($values['links']);
+        return $values;
+    }
+    
+    function getPublished()
+    {
+        return new DateTime($this->data['published']);
+    }
+    
+    function getId()
+    {
+        return $this->data['id'];
+    }
+    
+    function getVerb()
+    {
+        return $this->data['verb'];
+    }
+    
+    function getTitle()
+    {
+        return $this->data['title'];
+    }
+    
+    function getUrl()
+    {
+        return $this->data['url'];
+    }
+    
     function getActorId()
     {
         if (isset($this->data['actor']))

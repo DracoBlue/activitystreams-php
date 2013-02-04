@@ -109,6 +109,7 @@ can use the `AsApplication#recreateStream`.
 ## Changelog
 
 * 1.1-dev
+  - added new methods on `AsActivity` (getTitle, getVerb, getId, getPublished, getUrl)
   - added `AsActivity#getActor()` and `AsActivity#getActorId()`
   - added `AsActivity#getTarget()` and `AsActivity#getTargetId()`
   - added `AsActivity#getObject()` and `AsActivity#getObjectId()`
