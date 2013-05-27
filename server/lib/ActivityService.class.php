@@ -23,6 +23,30 @@ class ActivityService extends HttpResourceService
 
         return json_encode($values);
     }
+    
+    /**
+     * @return Activity[]
+     */
+    public function getActivities(array $values)
+    {
+        $db_service = Services::get('Database');
+
+        if (!isset($values['activity_id']))
+        {
+            throw new Exception('Cannot search for activites if no activity_id is given!');    
+        }
+        
+        $activity_id = $values['activity_id'];
+        $application_id = $this->getAuthenticatedApplicationId();
+
+        $activities = array();
+        foreach ($db_service->getTableRows('activities', 'id = ? and application_id = ?', array($activity_id, $application_id)) as $row)
+        {
+            $activities[] = new Activity($row);
+        }
+
+        return $activities;
+    }
 
     /**
      * @return Activity

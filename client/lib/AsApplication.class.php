@@ -131,7 +131,19 @@ class AsApplication extends AsResource
         $values['stream_id'] = $stream->getId();
         $this->client->post($stream->getLink('activities'), $values, $this->getAuth());
     }
-    
+
+    public function getActivityById($activity_id)
+    {
+        $activities = $this->client->get($this->getLink('activities'), array('activity_id' => $activity_id), $this->getAuth());
+        
+        if (count($activities) == 0)
+        {
+            throw new Exception('Cannot find activity with id ' . $activity_id);
+        }
+        
+        return new AsActivity($this, $activities[0]);
+    }
+
     public function getFeedForObject(AsObject $object, $offset = 0, $limit = 20)
     {
         $values = array(

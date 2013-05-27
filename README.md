@@ -1,7 +1,7 @@
 # activitystreams-php
 
-* Version: 1.1.0
-* Date: 2013/02/04
+* Version: 1.2-dev
+* Date: not-yet-released
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/activitystreams-php.png?branch=master)](http://travis-ci.org/DracoBlue/activitystreams-php), 100% Code Coverage
 
 This is an activity stream server and client. It's intended to implement a RESTful service to create, publish, (un)subscribe activity streams (according to the "JSON Activity Streams 1.0"[1]).
@@ -106,6 +106,8 @@ can use the `AsApplication#recreateStream`.
 
 ## Changelog
 
+* 1.2-dev
+  - added `AsApplication#getActivityById` (see #1)
 * 1.1.0 (2013/02/04)
   - added possibility to set the activity id when creating the activity
   - added new methods on `AsActivity` (getTitle, getVerb, getId, getPublished, getUrl)

@@ -23,6 +23,10 @@ class ApplicationService extends HttpResourceService
                 'href' => Config::get('endpoint_base_url') . 'stream'
             ),
             array(
+                'rel' => 'activities',
+                'href' => Config::get('endpoint_base_url') . 'activity'
+            ),
+            array(
                 'rel' => 'objects',
                 'href' => Config::get('endpoint_base_url') . 'object'
             )
