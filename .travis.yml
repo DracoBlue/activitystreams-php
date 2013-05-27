@@ -8,4 +8,5 @@ before_script:
   - mysql -e 'create database naith;'
   - mysql naith < server/initial_database.sql
   - sudo ./.travis/setup_fpm_and_nginx.sh
+  - php -i
 script: cd client && ../naith/naith run && cat junit.xml
