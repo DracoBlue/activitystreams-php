@@ -2,7 +2,7 @@
 apt-get update
 apt-get install nginx --fix-missing
 apt-get install php5-fpm php5-mysql php5-xdebug --fix-missing
-cat /etc/php5/conf.d/xdebug.ini
+php -i
 cd `dirname $0`
 cp nginx.conf /etc/nginx/nginx.conf
 echo "Restart NGINX"
