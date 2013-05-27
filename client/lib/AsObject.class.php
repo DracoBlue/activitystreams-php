@@ -45,9 +45,9 @@ class AsObject extends AsResource
         return $data;
     }
     
-    public function getFeed($offset = 0, $limit = 20)
+    public function getFeed($offset = 0, $limit = 20, AsActivity $before_activity = null)
     {
-        return $this->application->getFeedForObject($this, $offset, $limit);
+        return $this->application->getFeedForObject($this, $offset, $limit, $before_activity);
     }
     
     public function subscribeToStream(AsStream $stream)

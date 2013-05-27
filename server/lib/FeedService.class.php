@@ -55,7 +55,8 @@ class FeedService extends HttpResourceService
         }
 
         $db_service = Services::get('Database');
-        $rows = $db_service->getTableRows('activities', '
+        
+        $where_condition = '
             (
                 stream_id IN (SELECT id FROM streams WHERE auto_subscribe = 1)
                 AND stream_id NOT IN (SELECT stream_id FROM unsubscriptions WHERE object_id = ?)
@@ -64,12 +65,24 @@ class FeedService extends HttpResourceService
             (
                 stream_id IN (SELECT stream_id FROM subscriptions WHERE object_id = ?)
             )
-            
-            ORDER BY published DESC LIMIT ' . $offset . ', ' . $limit . '
-        ', array(
+        ';
+        $parameters = array(
             $object_id,
             $object_id
-        ));
+        );
+        
+        if (isset($values['before_id']) && isset($values['before_date']))
+        {
+            $where_condition = '(' . $where_condition . ') AND ((published < ?) OR (published = ? AND id < ?))';
+            $parameters[] = $values['before_date'];           
+            $parameters[] = $values['before_date'];
+            $parameters[] = $values['before_id'];
+        }
+        
+        $rows = $db_service->getTableRows('activities', '
+            ' . $where_condition . '
+            ORDER BY published DESC, id DESC LIMIT ' . $offset . ', ' . $limit . '
+        ', $parameters);
         return new Feed($rows);
     }
 

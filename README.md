@@ -1,7 +1,7 @@
 # activitystreams-php
 
-* Version: 1.2-dev
-* Date: not-yet-released
+* Version: 1.2.0
+* Date: 2013/05/28
 * Build Status: [![Build Status](https://secure.travis-ci.org/DracoBlue/activitystreams-php.png?branch=master)](http://travis-ci.org/DracoBlue/activitystreams-php), 100% Code Coverage
 
 This is an activity stream server and client. It's intended to implement a RESTful service to create, publish, (un)subscribe activity streams (according to the "JSON Activity Streams 1.0"[1]).
@@ -69,6 +69,13 @@ Finally we can fetch the most recent posts of an actor (will be 2!).
 
     $activities = $client->getFeedForObject($actor1, 0, 20);
     assert(count($activities) == 2);
+    
+Starting with 1.2.0, you can add a `$before_activity` to the gedFeedForObject-Method:
+
+    $activities = $client->getFeedForObject($actor1, 0, 20, $before_activity);
+    assert(count($activities) == 2);
+
+This will return only those activities, which have been posted _before_ a the `$before_activity` was created. Useful if you want to implement a *load more* button.
 
 ## Ondemand object and stream creation
 
@@ -106,8 +113,10 @@ can use the `AsApplication#recreateStream`.
 
 ## Changelog
 
-* 1.2-dev
+* 1.2.0 (2013/05/28)
   - added `AsApplication#getActivityById` (see #1)
+  - added parameter `$before_activity` to `AsObject#getFeed($offset = 0, $limit = 20, AsActivity $before_activity = null)` and
+    to `AsApplication#getFeedForObject(AsObject $object, $offset = 0, $limit = 20, AsActivity $before_activity)` (see #4)
 * 1.1.0 (2013/02/04)
   - added possibility to set the activity id when creating the activity
   - added new methods on `AsActivity` (getTitle, getVerb, getId, getPublished, getUrl)

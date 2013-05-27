@@ -144,12 +144,18 @@ class AsApplication extends AsResource
         return new AsActivity($this, $activities[0]);
     }
 
-    public function getFeedForObject(AsObject $object, $offset = 0, $limit = 20)
+    public function getFeedForObject(AsObject $object, $offset = 0, $limit = 20, AsActivity $before_activity = null)
     {
         $values = array(
             'offset' => $offset,
             'limit' => $limit
         );
+        
+        if ($before_activity)
+        {
+            $values['before_id'] = $before_activity->getId();
+            $values['before_date'] = $before_activity->getPublished()->format(DateTime::RFC3339);
+        }
         
         $raw_feed = $this->client->get($object->getLink('feed'), $values, $this->getAuth());
         
